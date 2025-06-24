@@ -1,10 +1,26 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { onAuthStateChanged, signOut, User as FirebaseUser } from 'firebase/auth';
 import { Search, ShoppingCart, User } from 'lucide-react';
+import { auth } from '@/lib/firebase';
 
 export default function NavigationBar() {
   const [searchQuery, setSearchQuery] = useState('');
+  const [user, setUser] = useState<FirebaseUser | null>(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      setUser(firebaseUser);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    await signOut(auth);
+  };
 
   return (
     <nav className="w-full bg-white border-b border-gray-200 px-4 py-3 shadow-sm">
@@ -46,16 +62,33 @@ export default function NavigationBar() {
           </form>
         </div>
 
-        {/* Right Side: Login/Register & Cart */}
+        {/* Right Side */}
         <div className="flex items-center space-x-6 text-sm">
-          
-          {/* Login/Register */}
-          <div className="flex items-center space-x-2 text-gray-700 hover:text-gray-900 cursor-pointer">
-            <User className="w-5 h-5" />
-            <span className="font-medium">Login</span>
-            <span className="text-gray-400">|</span>
-            <span className="font-medium">Register</span>
-          </div>
+          {user ? (
+            <>
+              {/* Show logged-in user */}
+              <div className="text-gray-700 flex items-center space-x-2">
+                <User className="w-5 h-5" />
+                <span className="font-medium truncate max-w-[120px]">{user.email}</span>
+                <button
+                  onClick={handleLogout}
+                  className="text-red-600 hover:underline text-xs"
+                >
+                  Logout
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              {/* Show Login/Register if not logged in */}
+              <div className="flex items-center space-x-2 text-gray-700 hover:text-gray-900">
+                <User className="w-5 h-5" />
+                <Link href="/login" className="font-medium hover:underline">Login</Link>
+                <span className="text-gray-400">|</span>
+                <Link href="/signup" className="font-medium hover:underline">Register</Link>
+              </div>
+            </>
+          )}
 
           {/* Shopping Cart */}
           <div className="relative cursor-pointer group">

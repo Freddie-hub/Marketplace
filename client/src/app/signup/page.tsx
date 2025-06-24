@@ -3,14 +3,15 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
   signInWithPopup,
+  updateProfile,
 } from 'firebase/auth';
 import { auth, googleProvider } from '@/lib/firebase';
 
-export default function LoginPage() {
+export default function SignupPage() {
   const router = useRouter();
-  const [form, setForm] = useState({ email: '', password: '' });
+  const [form, setForm] = useState({ email: '', password: '', name: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -18,12 +19,27 @@ export default function LoginPage() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleEmailLogin = async () => {
+  const syncUserToBackend = async (uid: string, email: string, name: string) => {
+    try {
+      await fetch('http://localhost:5000/api/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ firebase_uid: uid, email, name }),
+      });
+    } catch (err) {
+      console.error('Backend sync failed:', err);
+    }
+  };
+
+  const handleEmailSignup = async () => {
     setLoading(true);
     setError(null);
     try {
-      const { email, password } = form;
-      await signInWithEmailAndPassword(auth, email, password);
+      const { email, password, name } = form;
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      await updateProfile(userCredential.user, { displayName: name });
+
+      await syncUserToBackend(userCredential.user.uid, email, name);
       router.push('/');
     } catch (err: any) {
       setError(err.message);
@@ -32,11 +48,13 @@ export default function LoginPage() {
     }
   };
 
-  const handleGoogleLogin = async () => {
+  const handleGoogleSignup = async () => {
     setLoading(true);
     setError(null);
     try {
-      await signInWithPopup(auth, googleProvider);
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+      await syncUserToBackend(user.uid, user.email || '', user.displayName || '');
       router.push('/');
     } catch (err: any) {
       setError(err.message);
@@ -46,10 +64,18 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#FABFFF] px-4">
+    <div className="min-h-screen flex items-center justify-center bg-[#78CCD0] px-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 space-y-6">
-        <h2 className="text-3xl font-bold text-center text-[#205D5A]">Log In</h2>
+        <h2 className="text-3xl font-bold text-center text-[#205D5A]">Create Account</h2>
 
+        <input
+          name="name"
+          type="text"
+          placeholder="Full Name"
+          value={form.name}
+          onChange={handleChange}
+          className="w-full p-3 border rounded-xl border-[#00A79D] focus:outline-none focus:ring-2 focus:ring-[#00A79D]"
+        />
         <input
           name="email"
           type="email"
@@ -68,25 +94,18 @@ export default function LoginPage() {
         />
 
         {error && (
-          <div className="text-sm text-red-600 font-medium text-center">{error}</div>
+          <div className="text-sm text-red-600 font-medium text-center">
+            {error}
+          </div>
         )}
 
         <button
-          onClick={handleEmailLogin}
+          onClick={handleEmailSignup}
           disabled={loading}
           className="w-full bg-[#00A79D] text-white py-3 rounded-xl hover:bg-[#205D5A] transition duration-200 font-semibold"
         >
-          {loading ? 'Logging in...' : 'Log in with Email'}
+          {loading ? 'Signing up...' : 'Sign up with Email'}
         </button>
-
-        <div className="flex justify-between text-sm text-gray-600">
-          <a href="/reset-password" className="hover:underline text-[#BD011F] font-medium">
-            Forgot password?
-          </a>
-          <a href="/signup" className="hover:underline text-[#205D5A] font-medium">
-            Create an account
-          </a>
-        </div>
 
         <div className="flex items-center justify-center space-x-2 text-gray-400 text-sm">
           <span className="h-px bg-gray-300 w-1/4" />
@@ -95,12 +114,19 @@ export default function LoginPage() {
         </div>
 
         <button
-          onClick={handleGoogleLogin}
+          onClick={handleGoogleSignup}
           disabled={loading}
           className="w-full border border-[#FF990B] text-[#FF990B] py-3 rounded-xl hover:bg-[#FF990B] hover:text-white transition duration-200 font-semibold"
         >
-          {loading ? 'Signing in...' : 'Log in with Google'}
+          {loading ? 'Signing in...' : 'Sign up with Google'}
         </button>
+
+        <p className="text-center text-sm text-gray-600">
+          Already have an account?{' '}
+          <a href="/login" className="text-[#BD011F] font-semibold hover:underline">
+            Log in
+          </a>
+        </p>
       </div>
     </div>
   );
