@@ -1,10 +1,14 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
+import { auth } from '../lib/firebase'; // Import Firebase auth
+import { onAuthStateChanged } from 'firebase/auth';
 
 export default function CoffeeFarmerBanner() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const router = useRouter();
 
   const images = [
     "/images/Firstone.jpg",
@@ -41,6 +45,19 @@ export default function CoffeeFarmerBanner() {
       setCurrentImageIndex(index);
       // Timer will restart automatically due to useEffect dependency
     }
+  };
+
+  const handleSellNowClick = () => {
+    // Check authentication status
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is logged in, redirect to seller dashboard
+        router.push('/seller/dashboard');
+      } else {
+        // User is not logged in, redirect to login page
+        router.push('/login');
+      }
+    });
   };
 
   return (
@@ -85,7 +102,11 @@ export default function CoffeeFarmerBanner() {
               Shop Now 
               <span className="ml-2 group-hover:translate-x-1 inline-block transition-transform duration-300">→</span>
             </button>
-            <button className="group text-white font-semibold py-2 px-6 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 hover:scale-105 text-sm" style={{backgroundColor: '#00A79D'}}>
+            <button 
+              onClick={handleSellNowClick}
+              className="group text-white font-semibold py-2 px-6 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 hover:scale-105 text-sm" 
+              style={{backgroundColor: '#00A79D'}}
+            >
               Sell Now 
               <span className="ml-2 group-hover:translate-x-1 inline-block transition-transform duration-300">→</span>
             </button>
