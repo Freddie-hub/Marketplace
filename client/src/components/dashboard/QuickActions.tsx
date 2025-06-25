@@ -10,7 +10,6 @@ const QuickActions = () => {
       bgColor: "bg-gradient-to-br from-[#00A79D] to-[#78CCD0]",
       hoverColor: "hover:from-[#205D5A] hover:to-[#00A79D]",
       iconColor: "text-white",
-      delay: "0ms"
     },
     {
       id: 2,
@@ -19,7 +18,6 @@ const QuickActions = () => {
       bgColor: "bg-gradient-to-br from-[#FCB000] to-[#FF990B]",
       hoverColor: "hover:from-[#FF990B] hover:to-[#FCB000]",
       iconColor: "text-white",
-      delay: "100ms"
     },
     {
       id: 3,
@@ -28,7 +26,6 @@ const QuickActions = () => {
       bgColor: "bg-gradient-to-br from-[#BD011F] to-[#720218]",
       hoverColor: "hover:from-[#720218] hover:to-[#BD011F]",
       iconColor: "text-white",
-      delay: "200ms"
     },
     {
       id: 4,
@@ -37,7 +34,6 @@ const QuickActions = () => {
       bgColor: "bg-gradient-to-br from-[#FABFFF] to-[#78CCD0]",
       hoverColor: "hover:from-[#78CCD0] hover:to-[#FABFFF]",
       iconColor: "text-[#205D5A]",
-      delay: "300ms"
     }
   ];
 
@@ -58,42 +54,34 @@ const QuickActions = () => {
               className={`
                 ${action.bgColor} ${action.hoverColor}
                 rounded-2xl p-8 cursor-pointer
-                transform transition-all duration-500 ease-out
-                hover:scale-105 hover:-translate-y-2
-                shadow-lg hover:shadow-2xl
+                transform transition-all duration-500 ease-in-out
+                hover:scale-[1.04] hover:-translate-y-1
+                shadow-md hover:shadow-xl
                 group relative overflow-hidden
-                animate-pulse
               `}
             >
-              {/* Animated background overlay */}
-              <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out"></div>
-              
-              {/* Floating particles effect */}
-              <div className="absolute top-2 right-2 w-2 h-2 bg-white/30 rounded-full animate-ping"></div>
-              <div className="absolute top-4 right-8 w-1 h-1 bg-white/40 rounded-full animate-ping animate-delay-1000"></div>
-              
+              {/* Smooth shimmer effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out pointer-events-none"></div>
+
               <div className="relative z-10 flex flex-col items-center text-center space-y-4">
                 <div className={`
                   ${action.iconColor} 
-                  transform transition-all duration-300 
-                  group-hover:scale-110 group-hover:rotate-12
-                  drop-shadow-lg
+                  transition-transform duration-300 ease-in-out
+                  group-hover:scale-110 group-hover:rotate-3
+                  drop-shadow-md
                 `}>
                   <IconComponent size={48} strokeWidth={2} />
                 </div>
                 
                 <h3 className={`
                   text-xl font-semibold ${action.iconColor}
-                  transform transition-all duration-300
+                  transition-transform duration-300 ease-in-out
                   group-hover:scale-105
                   drop-shadow-sm
                 `}>
                   {action.title}
                 </h3>
               </div>
-              
-              {/* Subtle shimmer effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out"></div>
             </div>
           );
         })}

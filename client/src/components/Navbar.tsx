@@ -10,7 +10,6 @@ import {
   User,
   LayoutDashboard,
   LogOut,
-  Phone,
   Store,
 } from 'lucide-react';
 import { auth } from '@/lib/firebase';
@@ -40,15 +39,15 @@ export default function NavigationBar() {
   };
 
   if (loading) {
-    return <nav className="w-full bg-white border-b border-gray-200 px-4 py-3 shadow-sm"></nav>;
+    return <nav className="sticky top-0 z-50 w-full bg-white border-b border-gray-200 px-6 py-6 shadow-lg"></nav>;
   }
 
   return (
-    <nav className="w-full bg-white border-b border-gray-200 px-4 py-3 shadow-sm">
+    <nav className="sticky top-0 z-50 w-full bg-white border-b border-gray-200 px-3 py-3 shadow-lg">
       <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
         {/* Logo */}
         <Link href="/" className="flex items-center space-x-2">
-          <div className="w-9 h-9 bg-gradient-to-br from-green-400 to-teal-500 rounded-md flex items-center justify-center">
+          <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-teal-500 rounded-md flex items-center justify-center shadow-md">
             <span className="text-white font-bold text-lg">N</span>
           </div>
           <span className="text-xl font-bold text-gray-800">NERATION</span>
@@ -70,12 +69,12 @@ export default function NavigationBar() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search products..."
-                className="w-full px-4 py-2.5 text-sm text-gray-700 bg-gray-100 border border-gray-300 rounded-l-full focus:outline-none focus:ring-2 focus:ring-teal-500"
+                className="w-full px-5 py-3 text-sm text-gray-700 bg-gray-100 border border-gray-300 rounded-l-full focus:outline-none focus:ring-2 focus:ring-teal-500 shadow-sm"
                 aria-label="Search products"
               />
               <button
                 type="submit"
-                className="px-5 py-2.5 bg-teal-500 text-white rounded-r-full hover:bg-teal-600 transition"
+                className="px-6 py-3 bg-teal-500 text-white rounded-r-full hover:bg-teal-600 transition shadow-md hover:shadow-lg"
                 aria-label="Submit search"
               >
                 <Search className="w-5 h-5" />
@@ -93,7 +92,7 @@ export default function NavigationBar() {
               {/* Switch between Dashboard / Marketplace */}
               <Link
                 href={isDashboard ? '/' : '/dashboard'}
-                className="flex items-center space-x-2 text-gray-700 hover:text-teal-600 transition-colors"
+                className="flex items-center space-x-2 text-gray-700 hover:text-teal-600 transition-colors px-3 py-2 rounded-lg hover:bg-gray-50 hover:shadow-sm"
                 aria-label={isDashboard ? 'Go to marketplace' : 'Go to dashboard'}
               >
                 {isDashboard ? <Store className="w-5 h-5" /> : <LayoutDashboard className="w-5 h-5" />}
@@ -104,8 +103,8 @@ export default function NavigationBar() {
 
               {/* User Info */}
               <div className="flex items-center space-x-3 text-gray-700">
-                <div className="flex items-center space-x-2 max-w-[150px] truncate">
-                  <div className="w-8 h-8 bg-gradient-to-br from-teal-400 to-teal-600 rounded-full flex items-center justify-center">
+                <div className="flex items-center space-x-2 max-w-[150px] truncate px-2 py-1 rounded-lg">
+                  <div className="w-9 h-9 bg-gradient-to-br from-teal-400 to-teal-600 rounded-full flex items-center justify-center shadow-md">
                     <User className="w-4 h-4 text-white" />
                   </div>
                   <span className="font-medium truncate">
@@ -116,7 +115,7 @@ export default function NavigationBar() {
                 {/* Logout */}
                 <button
                   onClick={handleLogout}
-                  className="flex items-center space-x-1 px-3 py-1.5 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-md transition-colors"
+                  className="flex items-center space-x-1 px-3 py-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-md transition-colors shadow-sm hover:shadow-md"
                   title="Logout"
                   aria-label="Logout"
                 >
@@ -126,7 +125,7 @@ export default function NavigationBar() {
               </div>
             </>
           ) : (
-            <div className="flex items-center space-x-2 text-gray-700">
+            <div className="flex items-center space-x-2 text-gray-700 px-3 py-2 rounded-lg hover:bg-gray-50 hover:shadow-sm transition-all">
               <User className="w-5 h-5" />
               <Link href="/login" className="font-medium hover:underline" aria-label="Login">Login</Link>
               <span className="text-gray-400">|</span>
@@ -136,9 +135,9 @@ export default function NavigationBar() {
 
           {/* Cart - Only show when NOT on dashboard */}
           {!isDashboard && (
-            <div className="relative cursor-pointer group" aria-label="Shopping cart">
+            <div className="relative cursor-pointer group p-2 rounded-lg hover:bg-gray-50 hover:shadow-sm transition-all" aria-label="Shopping cart">
               <ShoppingCart className="w-6 h-6 text-gray-600 group-hover:text-gray-800 transition" />
-              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-semibold rounded-full w-5 h-5 flex items-center justify-center">
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-semibold rounded-full w-5 h-5 flex items-center justify-center shadow-md">
                 0
               </span>
             </div>

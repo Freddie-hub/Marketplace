@@ -1,8 +1,20 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #858985;
+  /* Brand Colors */
+  --color-teal: #00A79D;
+  --color-bright-orange: #FCB000;
+  --color-vivid-orange: #FF990B;
+  --color-deep-red: #BD011F;
+  --color-dark-burgundy: #720218;
+  --color-light-aqua: #78CCD0;
+  --color-dark-teal: #205D5A;
+  --color-pink-lavender: #FABFFF;
+  --color-black: #000000;
+
+  /* Set default theme (light mode) */
+  --background: var(--color-light-aqua); /* Or choose another suitable background */
+  --foreground: var(--color-black); /* Or any other suitable text color */
 }
 
 @theme inline {
@@ -14,8 +26,8 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #3e433f;
-    --foreground: #8e9490;
+    --background: var(--color-dark-teal); /* Dark background for dark mode */
+    --foreground: var(--color-pink-lavender); /* Light text for dark mode */
   }
 }
 
