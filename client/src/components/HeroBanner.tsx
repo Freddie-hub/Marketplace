@@ -52,7 +52,7 @@ export default function CoffeeFarmerBanner() {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         // User is logged in, redirect to seller dashboard
-        router.push('/seller/dashboard');
+        router.push('/dashboard');
       } else {
         // User is not logged in, redirect to login page
         router.push('/login');
