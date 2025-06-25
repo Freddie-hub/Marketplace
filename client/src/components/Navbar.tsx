@@ -9,10 +9,12 @@ import { auth } from '@/lib/firebase';
 export default function NavigationBar() {
   const [searchQuery, setSearchQuery] = useState('');
   const [user, setUser] = useState<FirebaseUser | null>(null);
+  const [loading, setLoading] = useState(true); // Add loading state
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       setUser(firebaseUser);
+      setLoading(false); // Set loading to false once auth state is resolved
     });
 
     return () => unsubscribe();
@@ -22,10 +24,13 @@ export default function NavigationBar() {
     await signOut(auth);
   };
 
+  if (loading) {
+    return <nav className="w-full bg-white border-b border-gray-200 px-4 py-3 shadow-sm"></nav>; // Optional: Show a placeholder or spinner
+  }
+
   return (
     <nav className="w-full bg-white border-b border-gray-200 px-4 py-3 shadow-sm">
       <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
-        
         {/* Logo */}
         <div className="flex items-center space-x-2">
           <div className="w-9 h-9 bg-gradient-to-br from-green-400 to-teal-500 rounded-md flex items-center justify-center">
@@ -69,7 +74,9 @@ export default function NavigationBar() {
               {/* Show logged-in user */}
               <div className="text-gray-700 flex items-center space-x-2">
                 <User className="w-5 h-5" />
-                <span className="font-medium truncate max-w-[120px]">{user.email}</span>
+                <span className="font-medium truncate max-w-[120px]">
+                  {user.displayName || user.email || 'User'}
+                </span>
                 <button
                   onClick={handleLogout}
                   className="text-red-600 hover:underline text-xs"

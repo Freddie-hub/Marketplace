@@ -1,11 +1,13 @@
 // client/src/lib/firebase.ts
-import { initializeApp, getApps, getApp } from "firebase/app";
+import { initializeApp, getApps, getApp } from 'firebase/app';
 import { 
   getAuth, 
   GoogleAuthProvider, 
-  sendPasswordResetEmail 
-} from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+  sendPasswordResetEmail,
+  setPersistence,
+  browserLocalPersistence,
+} from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
 
 // Firebase config from environment
 const firebaseConfig = {
@@ -20,9 +22,18 @@ const firebaseConfig = {
 // Initialize app safely (singleton)
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
-// Auth and Firestore
+// Initialize Auth and Firestore
 const auth = getAuth(app);
 const db = getFirestore(app);
+
+// Set persistence to local to ensure session persists across page refreshes
+setPersistence(auth, browserLocalPersistence)
+  .then(() => {
+    console.log('Firebase auth persistence set to local');
+  })
+  .catch((error) => {
+    console.error('Error setting Firebase auth persistence:', error);
+  });
 
 // Google provider for OAuth
 const googleProvider = new GoogleAuthProvider();

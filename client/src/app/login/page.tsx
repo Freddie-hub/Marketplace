@@ -13,6 +13,7 @@ export default function LoginPage() {
   const [form, setForm] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -46,7 +47,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#FABFFF] px-4">
+    <div className="min-h-screen flex items-center justify-center bg-[#476869] px-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 space-y-6">
         <h2 className="text-3xl font-bold text-center text-[#205D5A]">Log In</h2>
 
@@ -56,16 +57,26 @@ export default function LoginPage() {
           placeholder="Email"
           value={form.email}
           onChange={handleChange}
-          className="w-full p-3 border rounded-xl border-[#00A79D] focus:outline-none focus:ring-2 focus:ring-[#00A79D]"
+          className="w-full p-3 border-2 rounded-xl border-[#00A79D] bg-white text-black placeholder-gray-600 placeholder-opacity-100 focus:outline-none focus:ring-2 focus:ring-[#00A79D]"
         />
-        <input
-          name="password"
-          type="password"
-          placeholder="Password"
-          value={form.password}
-          onChange={handleChange}
-          className="w-full p-3 border rounded-xl border-[#00A79D] focus:outline-none focus:ring-2 focus:ring-[#00A79D]"
-        />
+
+        <div className="relative">
+          <input
+            name="password"
+            type={showPassword ? 'text' : 'password'}
+            placeholder="Password"
+            value={form.password}
+            onChange={handleChange}
+            className="w-full p-3 pr-10 border-2 rounded-xl border-[#00A79D] bg-white text-black placeholder-gray-600 placeholder-opacity-100 focus:outline-none focus:ring-2 focus:ring-[#00A79D]"
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-sm text-[#00A79D] font-medium focus:outline-none"
+          >
+            {showPassword ? 'Hide' : 'Show'}
+          </button>
+        </div>
 
         {error && (
           <div className="text-sm text-red-600 font-medium text-center">{error}</div>
