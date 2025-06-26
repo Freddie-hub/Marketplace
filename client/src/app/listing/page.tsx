@@ -88,7 +88,6 @@ export default function ListingPage() {
           )}
         </div>
       </main>
-      <Footer />
     </>
   );
 }

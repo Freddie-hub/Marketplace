@@ -8,13 +8,13 @@
   --color-deep-red: #BD011F;
   --color-dark-burgundy: #720218;
   --color-light-aqua: #78CCD0;
-  --color-dark-teal: #205D5A;
+  --color-dark-teal: #345e5b;
   --color-pink-lavender: #FABFFF;
   --color-black: #000000;
 
   /* Set default theme (light mode) */
-  --background: var(--color-light-aqua); /* Or choose another suitable background */
-  --foreground: var(--color-black); /* Or any other suitable text color */
+  --background: #f0f0f0; /* Faded gray background */
+  --foreground: var(--color-black); /* Text color */
 }
 
 @theme inline {
@@ -24,10 +24,11 @@
   --font-mono: var(--font-geist-mono);
 }
 
+/* Keep background faded gray even in dark mode */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: var(--color-dark-teal); /* Dark background for dark mode */
-    --foreground: var(--color-pink-lavender); /* Light text for dark mode */
+    --background: #f0f0f0; /* Keep faded gray in dark mode */
+    --foreground: var(--color-black); /* Or choose a lighter color if needed */
   }
 }
 
