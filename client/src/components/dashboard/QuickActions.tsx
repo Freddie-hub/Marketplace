@@ -1,22 +1,26 @@
-import React from 'react';
-import { Package, MessageSquare, DollarSign, TrendingUp } from 'lucide-react';
+"use client";
+
+import React from "react";
+import { useRouter } from "next/navigation";
+import { Package, MessageSquare, DollarSign, TrendingUp } from "lucide-react";
 
 const QuickActions = () => {
+  const router = useRouter();
+
   const actions = [
     {
       id: 1,
       title: "Add Product",
       icon: Package,
       bgColor: "bg-gradient-to-br from-[#00A79D] to-[#78CCD0]",
-      hoverColor: "hover:from-[#205D5A] hover:to-[#00A79D]",
       iconColor: "text-white",
+      onClick: () => router.push("/listing"),
     },
     {
       id: 2,
       title: "Check Messages",
       icon: MessageSquare,
       bgColor: "bg-gradient-to-br from-[#FCB000] to-[#FF990B]",
-      hoverColor: "hover:from-[#FF990B] hover:to-[#FCB000]",
       iconColor: "text-white",
     },
     {
@@ -24,7 +28,6 @@ const QuickActions = () => {
       title: "View Payments",
       icon: DollarSign,
       bgColor: "bg-gradient-to-br from-[#BD011F] to-[#720218]",
-      hoverColor: "hover:from-[#720218] hover:to-[#BD011F]",
       iconColor: "text-white",
     },
     {
@@ -32,9 +35,8 @@ const QuickActions = () => {
       title: "Sales Report",
       icon: TrendingUp,
       bgColor: "bg-gradient-to-br from-[#FABFFF] to-[#78CCD0]",
-      hoverColor: "hover:from-[#78CCD0] hover:to-[#FABFFF]",
       iconColor: "text-[#205D5A]",
-    }
+    },
   ];
 
   return (
@@ -44,41 +46,25 @@ const QuickActions = () => {
           Quick Actions
         </h1>
       </div>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {actions.map((action) => {
           const IconComponent = action.icon;
           return (
             <div
               key={action.id}
+              onClick={action.onClick}
               className={`
-                ${action.bgColor} ${action.hoverColor}
+                ${action.bgColor}
                 rounded-2xl p-8 cursor-pointer
-                transform transition-all duration-500 ease-in-out
-                hover:scale-[1.04] hover:-translate-y-1
-                shadow-md hover:shadow-xl
-                group relative overflow-hidden
+                shadow-md
               `}
             >
-              {/* Smooth shimmer effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out pointer-events-none"></div>
-
-              <div className="relative z-10 flex flex-col items-center text-center space-y-4">
-                <div className={`
-                  ${action.iconColor} 
-                  transition-transform duration-300 ease-in-out
-                  group-hover:scale-110 group-hover:rotate-3
-                  drop-shadow-md
-                `}>
+              <div className="flex flex-col items-center text-center space-y-4">
+                <div className={`${action.iconColor}`}>
                   <IconComponent size={48} strokeWidth={2} />
                 </div>
-                
-                <h3 className={`
-                  text-xl font-semibold ${action.iconColor}
-                  transition-transform duration-300 ease-in-out
-                  group-hover:scale-105
-                  drop-shadow-sm
-                `}>
+                <h3 className={`text-xl font-semibold ${action.iconColor}`}>
                   {action.title}
                 </h3>
               </div>
