@@ -1,10 +1,13 @@
 import './globals.css';
 import { ReactNode } from 'react';
+import { ApolloProvider } from './apollo-provider';
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <ApolloProvider>{children}</ApolloProvider>
+      </body>
     </html>
   );
 }
