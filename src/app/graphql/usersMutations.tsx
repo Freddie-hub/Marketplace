@@ -24,6 +24,13 @@ export const CREATE_WAREHOUSE_WITH_MANAGER_MUTATION = gql`
       status
       message
       token
+      user {
+        id
+        username
+        email
+        role
+        password
+      }
     }
   }
 `;
