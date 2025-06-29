@@ -15,7 +15,7 @@ export default function CoffeeFarmerBanner() {
     '/images/Rice.jpg'
   ];
 
-  const SLIDE_DURATION = 10000; // 10 seconds
+  const SLIDE_DURATION = 10000;
 
   const startSlideTimer = () => {
     if (intervalRef.current) clearTimeout(intervalRef.current);
@@ -42,11 +42,11 @@ export default function CoffeeFarmerBanner() {
   };
 
   const handleShopNowClick = () => {
-    router.push('/signup?role=BUYER');
+    router.push('/signup/buyer');
   };
 
   const handleSellNowClick = () => {
-    router.push('/signup?role=FARMER');
+    router.push('/signup/farmer');
   };
 
   return (
