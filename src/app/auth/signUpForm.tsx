@@ -1,16 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import { useState, type FC, type ChangeEvent, useMemo } from 'react';
+import { useState, type FC, type ChangeEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { useMutation } from '@apollo/client';
-import { createUserWithEmailAndPassword, signInWithPopup, updateProfile,User } from 'firebase/auth';
-import { auth, googleProvider } from '@/lib/firebase';
 import { CREATE_FARMER_OR_BUYER_MUTATION } from "@/app/graphql/usersMutations";
-import Image from 'next/image';
+import { GOOGLE_SIGNUP_MUTATION } from '../graphql/googleMutations';
 import { CircleUser, Lock, Mail, Phone, Home } from 'lucide-react';
 import { SignUpFormProps } from '@/types/SignupFormProps';
 import { FormState } from '@/types/FormState';
+import { GoogleLogin } from '@react-oauth/google';
 
 interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   icon: React.ReactNode;
@@ -41,49 +40,11 @@ const SignUpForm: FC<SignUpFormProps> = ({ role, title, subtitle }) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const [createFarmerOrBuyer, { loading }] = useMutation(CREATE_FARMER_OR_BUYER_MUTATION);
+  const [googleSignup, { loading: googleLoading }] = useMutation(GOOGLE_SIGNUP_MUTATION);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setForm((prevForm) => ({ ...prevForm, [name]: value }));
-  };
-  
-  const displayName = useMemo(() => {
-    return `${form.firstName} ${form.middleName} ${form.lastName}`.replace(/\s+/g, ' ').trim();
-  }, [form.firstName, form.middleName, form.lastName]);
-
-  const syncUserToBackend = async (firebaseUser:User, isGoogleUser = false) => {
-    const fName = isGoogleUser ? firebaseUser.displayName?.split(' ')[0] || '' : form.firstName;
-    const lName = isGoogleUser ? firebaseUser.displayName?.split(' ').slice(1).join(' ') || '' : form.lastName;
-
-    const variables = {
-      args: {
-        email: firebaseUser.email,
-        Fname: fName,
-        Lname: lName,
-        Mname:form.middleName,
-        phone: form.phone || null,
-        address: form.address || null,
-        isGoogleUser,
-        googleId: isGoogleUser ? firebaseUser.uid : null,
-        password: isGoogleUser ? null : form.password,
-        role,
-      }
-    };
-
-    try {
-      const result = await createFarmerOrBuyer({ variables });
-      const backendToken = result.data?.createFarmerOrBuyer?.token;
-
-      if (backendToken) {
-        localStorage.setItem('token', backendToken);
-        router.push('/dashboard'); 
-      } else {
-         throw new Error("Authentication token not received.");
-      }
-    } catch (err: any) {
-      setError(err.message);
-      throw err;
-    }
   };
 
   const validateForm = (): boolean => {
@@ -99,22 +60,80 @@ const SignUpForm: FC<SignUpFormProps> = ({ role, title, subtitle }) => {
     if (!validateForm()) return;
 
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, form.email, form.password);
-      await updateProfile(userCredential.user, { displayName });
-      await syncUserToBackend(userCredential.user, false);
+      const variables = {
+        args: {
+          email: form.email,
+          Fname: form.firstName,
+          Lname: form.lastName,
+          Mname: form.middleName,
+          phone: form.phone || null,
+          address: form.address || null,
+          isGoogleUser: false,
+          googleId: null,
+          password: form.password,
+          role,
+        }
+      };
+
+      const result = await createFarmerOrBuyer({ variables });
+      const backendToken = result.data?.createFarmerOrBuyer?.token;
+
+      if (backendToken) {
+        localStorage.setItem('token', backendToken);
+        router.push('/dashboard'); 
+      } else {
+        throw new Error("Authentication token not received.");
+      }
     } catch (err: any) {
-      setError(err.message.replace('Firebase:', ''));
+      setError(err.message);
     }
   };
 
-  const handleGoogleSignup = async () => {
+  const handleGoogleSuccess = async (credentialResponse: any) => {
     setError(null);
+    
     try {
-      const result = await signInWithPopup(auth, googleProvider);
-      await syncUserToBackend(result.user, true);
+      const payload = JSON.parse(atob(credentialResponse.credential.split('.')[1]));
+      
+      const googleUserData = {
+        email: payload.email,
+        Fname: payload.given_name,
+        Lname: payload.family_name || '',
+        googleId: payload.sub,
+        photo: payload.picture
+      };
+
+      const variables = {
+        args: {
+          googleUserData,
+          role,
+          ...((role as string) === 'WAREHOUSE_GUY' && {
+            warehouse_name: form.firstName + "'s Warehouse", 
+            warehouse_location: form.address || 'Location TBD',
+            warehouse_address: form.address,
+            warehouse_capacity: 1000,
+            warehouse_phone: form.phone,
+            warehouse_email: form.email
+          })
+        }
+      };
+
+      const result = await googleSignup({ variables });
+      const backendToken = result.data?.GoogleSignup?.token;
+
+      if (backendToken) {
+        localStorage.setItem('token', backendToken);
+        router.push('/dashboard');
+      } else {
+        throw new Error("Authentication token not received.");
+      }
     } catch (err: any) {
-      setError(err.message.replace('Firebase:', ''));
+      setError(err.message);
     }
+  };
+
+  const handleGoogleError = () => {
+    setError('Google Sign-In failed. Please try again.');
   };
 
   return (
@@ -126,19 +145,55 @@ const SignUpForm: FC<SignUpFormProps> = ({ role, title, subtitle }) => {
         </div>
 
         {error && (
-            <div className="p-3 bg-red-50 border border-red-300 text-red-700 rounded-lg text-center" role="alert">
-                {error}
-            </div>
+          <div className="p-3 bg-red-50 border border-red-300 text-red-700 rounded-lg text-center" role="alert">
+            {error}
+          </div>
         )}
 
         <div className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <InputField icon={<CircleUser size={16} />} name="firstName" type="text" placeholder="First Name *" value={form.firstName} onChange={handleChange} required aria-label="First Name" />
-            <InputField icon={<span className="opacity-0 w-4"/>} name="lastName" type="text" placeholder="Last Name *" value={form.lastName} onChange={handleChange} required aria-label="Last Name" />
+            <InputField 
+              icon={<CircleUser size={16} />} 
+              name="firstName" 
+              type="text" 
+              placeholder="First Name *" 
+              value={form.firstName} 
+              onChange={handleChange} 
+              required 
+              aria-label="First Name" 
+            />
+            <InputField 
+              icon={<span className="opacity-0 w-4"/>} 
+              name="lastName" 
+              type="text" 
+              placeholder="Last Name *" 
+              value={form.lastName} 
+              onChange={handleChange} 
+              required 
+              aria-label="Last Name" 
+            />
           </div>
-           <InputField icon={<CircleUser size={16} className="text-transparent" />} name="middleName" type="text" placeholder="Middle Name (Optional)" value={form.middleName} onChange={handleChange} aria-label="Middle Name" />
+          
+          <InputField 
+            icon={<CircleUser size={16} className="text-transparent" />} 
+            name="middleName" 
+            type="text" 
+            placeholder="Middle Name (Optional)" 
+            value={form.middleName} 
+            onChange={handleChange} 
+            aria-label="Middle Name" 
+          />
 
-          <InputField icon={<Mail size={16} />} name="email" type="email" placeholder="Email Address *" value={form.email} onChange={handleChange} required aria-label="Email Address" />
+          <InputField 
+            icon={<Mail size={16} />} 
+            name="email" 
+            type="email" 
+            placeholder="Email Address *" 
+            value={form.email} 
+            onChange={handleChange} 
+            required 
+            aria-label="Email Address" 
+          />
           
           <div className="relative">
             <InputField
@@ -165,8 +220,24 @@ const SignUpForm: FC<SignUpFormProps> = ({ role, title, subtitle }) => {
           
           <p className="text-sm text-center text-gray-500">Optional Information</p>
           
-          <InputField icon={<Phone size={16} />} name="phone" type="tel" placeholder="Phone Number" value={form.phone} onChange={handleChange} aria-label="Phone Number" />
-          <InputField icon={<Home size={16} />} name="address" type="text" placeholder="Address" value={form.address} onChange={handleChange} aria-label="Address" />
+          <InputField 
+            icon={<Phone size={16} />} 
+            name="phone" 
+            type="tel" 
+            placeholder="Phone Number" 
+            value={form.phone} 
+            onChange={handleChange} 
+            aria-label="Phone Number" 
+          />
+          <InputField 
+            icon={<Home size={16} />} 
+            name="address" 
+            type="text" 
+            placeholder="Address" 
+            value={form.address} 
+            onChange={handleChange} 
+            aria-label="Address" 
+          />
         </div>
 
         <div className="space-y-4 pt-2">
@@ -184,14 +255,16 @@ const SignUpForm: FC<SignUpFormProps> = ({ role, title, subtitle }) => {
             <hr className="flex-grow border-t border-gray-200"/>
           </div>
 
-          <button
-            onClick={handleGoogleSignup}
-            disabled={loading}
-            className="w-full flex items-center justify-center gap-3 border border-gray-300 text-gray-700 py-3 rounded-lg hover:bg-gray-50 transition-colors duration-300 font-semibold disabled:bg-gray-200 shadow-sm hover:shadow-md"
-          >
-            <Image src="/google.png" alt="Google" width={20} height={20}/>
-            {loading ? 'Processing...' : 'Sign up with Google'}
-          </button>
+          <div className={`w-full flex justify-center ${loading || googleLoading ? 'opacity-50 pointer-events-none' : ''}`}>
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleError}
+              theme="outline"
+              size="large"
+              width="100%"
+              text="signup_with"
+            />
+          </div>
         </div>
 
         <p className="text-center text-sm text-gray-600">
