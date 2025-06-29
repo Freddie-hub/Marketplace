@@ -3,68 +3,143 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useMutation } from '@apollo/client';
-import { signInWithEmailAndPassword, signInWithPopup, UserCredential } from 'firebase/auth';
-import { auth, googleProvider } from '@/lib/firebase';
 import LOGIN_MUTATION from '../graphql/loginMutation';
-import Image from 'next/image';
+import { toast } from 'react-toastify';
+import { GoogleLogin, CredentialResponse } from "@react-oauth/google";
+import { jwtDecode, JwtPayload } from "jwt-decode";
+
+interface LoginFormData {
+  email: string;
+  password: string;
+}
+
+interface LoginResponse {
+  login: {
+    status: string;
+    message: string;
+    token: string;
+    user: User;
+  };
+}
+interface User{
+  email:string
+  password:string
+  Fname:string
+  role: "ADMINISTRATOR" | "FARMER" | "BUYER" | "WAREHOUSE_GUY"
+  Mname:string
+  Lname:string
+  phone:string
+  address:string
+  photo:string
+}
+export interface GoogleJwtPayload extends JwtPayload {
+  email?: string;
+  given_name?: string;
+  family_name?: string;
+  picture?: string;
+}
 
 export default function LoginPage() {
   const router = useRouter();
-  const [form, setForm] = useState({ email: '', password: '' });
+  const [form, setForm] = useState<LoginFormData>({ email: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [login, { loading, error }] = useMutation(LOGIN_MUTATION);
+  const [login, { loading, error }] = useMutation<LoginResponse>(LOGIN_MUTATION);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setForm(prevForm => ({
+      ...prevForm,
+      [name]: value
+    }));
   };
 
-  const handleBackendLogin = async (userCredential: UserCredential) => {
-    try {
-      const idToken = await userCredential.user.getIdToken();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await handleLogin();
+  };
 
+  const handleLogin = async () => {
+    if (!form.email || !form.password) {
+      toast.error('Please fill in all fields');
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    try {
       const { data } = await login({
-        variables: { idToken },
+        variables: {
+          args: {
+            email: form.email.trim(),
+            password: form.password,
+          }
+        }
       });
+
+      console.log("Login response:", data);
 
       if (data?.login?.token) {
         localStorage.setItem('token', data.login.token);
-        // localStorage.setItem('user', JSON.stringify(data.login.user));
         
-        router.push('/dashboard'); 
+        if (data.login.user) {
+          localStorage.setItem('user', JSON.stringify(data.login.user));
+        }
+
+        toast.success(data.login.message || 'Login successful!');
+        
+        router.push('/dashboard');
       } else {
-        throw new Error('Login failed: No token received from server.');
+        throw new Error(data?.login?.message || 'Login failed: No token received from server.');
       }
-    } catch (err: any) {
-      auth.signOut();
-      throw err;
+    } catch (err) {
+      console.error('Login error:', err);
+      toast.error('An error occurred during login');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+  const handleGoogleLogin = async (credentialResponse: CredentialResponse) => {
+    try {
+      if (credentialResponse.credential) {
+        const decodedToken = jwtDecode<GoogleJwtPayload>(credentialResponse.credential);
+        const googleEmail = decodedToken.email;
+
+        if (!googleEmail) {
+          toast.error("Google login failed", {
+          });
+          return;
+        }
+
+        const response = await login({
+          variables: { email: googleEmail, password: "" },
+        });
+
+        if (response.data?.login.status === "Success") {
+          toast.success("Welcome back!", {
+          });
+          router.push("/dashboard")
+        } else {
+          toast.error("Google login failed");
+        }
+      } else {
+        toast.error("Google login failed", {
+        });
+      }
+    } catch (error) {
+      console.error("Google Login Error:", error);
+      toast.error("Google login failed", {
+      });
+    } finally {
     }
   };
 
-  const handleEmailLogin = async () => {
-    try {
-      const userCredential = await signInWithEmailAndPassword(auth, form.email, form.password);
-      await handleBackendLogin(userCredential);
-    } catch (err: any) {
-      console.error(err.message);
-    }
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
-  const handleGoogleLogin = async () => {
-    try {
-      const userCredential = await signInWithPopup(auth, googleProvider);
-      await handleBackendLogin(userCredential);
-    } catch (err: any) {
-      console.error(err.message);
-    }
-  };
-  
-  const InputField = (props: React.InputHTMLAttributes<HTMLInputElement>) => (
-    <input
-      {...props}
-      className="w-full p-3 border-2 rounded-xl border-[#00A79D] bg-white text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00A79D] transition"
-    />
-  );
+  const isLoading = loading || isSubmitting;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#476869] p-4">
@@ -74,31 +149,82 @@ export default function LoginPage() {
           <p className="text-gray-600 mt-2">Log in to continue to the Marketplace.</p>
         </div>
 
-        {error && <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded-xl text-center">{error.message}</div>}
+        {error && (
+          <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded-xl text-center">
+            {error.message}
+          </div>
+        )}
 
-        <div className="space-y-4">
-          <InputField name="email" type="email" placeholder="Email Address" value={form.email} onChange={handleChange} />
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <input
+              name="email"
+              type="email"
+              placeholder="Email Address"
+              value={form.email}
+              onChange={handleChange}
+              required
+              disabled={isLoading}
+              className="w-full p-3 border-2 rounded-xl border-[#00A79D] bg-white text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00A79D] transition disabled:bg-gray-100 disabled:cursor-not-allowed"
+            />
+          </div>
+
+          {/* Password Input */}
           <div className="relative">
-            <InputField name="password" type={showPassword ? 'text' : 'password'} placeholder="Password" value={form.password} onChange={handleChange} />
-            <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-medium text-[#00A79D]">
+            <input
+              name="password"
+              type={showPassword ? 'text' : 'password'}
+              placeholder="Password"
+              value={form.password}
+              onChange={handleChange}
+              required
+              disabled={isLoading}
+              className="w-full p-3 border-2 rounded-xl border-[#00A79D] bg-white text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00A79D] transition disabled:bg-gray-100 disabled:cursor-not-allowed pr-16"
+            />
+            <button
+              type="button"
+              onClick={togglePasswordVisibility}
+              disabled={isLoading}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-medium text-[#00A79D] hover:text-[#205D5A] transition disabled:text-gray-400"
+            >
               {showPassword ? 'Hide' : 'Show'}
             </button>
           </div>
-        </div>
 
-        <div className="space-y-4">
-          <button onClick={handleEmailLogin} disabled={loading} className="w-full bg-[#00A79D] text-white py-3 rounded-xl hover:bg-[#205D5A] transition duration-300 font-semibold disabled:bg-gray-400">
-            {loading ? 'Logging in...' : 'Log In'}
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full bg-[#00A79D] text-white py-3 rounded-xl hover:bg-[#205D5A] transition duration-300 font-semibold disabled:bg-gray-400 disabled:cursor-not-allowed"
+          >
+            {isLoading ? 'Logging in...' : 'Log In'}
           </button>
-          <button onClick={handleGoogleLogin} disabled={loading} className="w-full flex items-center justify-center gap-2 border border-gray-300 text-gray-700 py-3 rounded-xl hover:bg-gray-100 transition duration-300 font-semibold disabled:bg-gray-200">
-             <Image src="/google.png" alt="Google" className="w-5 h-5" width={100} height={100}/>
-             {loading ? 'Processing...' : 'Log In with Google'}
-          </button>
-        </div>
-        
+        </form>
+                    <div className="flex justify-center">
+              <GoogleLogin
+                size="large"
+                shape="rectangular"
+                theme="outline"
+                onSuccess={handleGoogleLogin}
+                onError={() => {
+                  toast.error("Google login failed", 
+                  );
+                }}
+              />
+            </div>
+
         <div className="flex justify-between text-sm text-gray-600 font-medium">
-            <a href="/reset-password" className="text-[#BD011F] hover:underline">Forgot password?</a>
-            <a href="/signup" className="text-[#205D5A] hover:underline">Create an account</a>
+          <a 
+            href="/reset-password" 
+            className="text-[#BD011F] hover:underline transition"
+          >
+            Forgot password?
+          </a>
+          <a 
+            href="/signup" 
+            className="text-[#205D5A] hover:underline transition"
+          >
+            Create an account
+          </a>
         </div>
       </div>
     </div>
