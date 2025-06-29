@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { onAuthStateChanged, signOut, User as FirebaseUser } from 'firebase/auth';
 import {
   Search,
@@ -13,6 +13,7 @@ import {
   Store,
 } from 'lucide-react';
 import { auth } from '@/lib/firebase';
+import { toast } from 'react-toastify';
 
 export default function NavigationBar() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -20,6 +21,7 @@ export default function NavigationBar() {
   const [loading, setLoading] = useState(true);
   const pathname = usePathname();
   const isDashboard = pathname?.startsWith('/dashboard') ?? false;
+  const router = useRouter()
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
@@ -33,6 +35,10 @@ export default function NavigationBar() {
   const handleLogout = async () => {
     try {
       await signOut(auth);
+      toast.success("You have been Logged out successfuly")
+      await localStorage.removeItem("token")
+      await localStorage.removeItem("user")
+      router.push("/")
     } catch (error) {
       console.error('Error signing out:', error);
     }
