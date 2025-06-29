@@ -4,11 +4,11 @@
 import { useState, type FC, type ChangeEvent, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useMutation } from '@apollo/client';
-import { createUserWithEmailAndPassword, signInWithPopup, updateProfile, } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithPopup, updateProfile,User } from 'firebase/auth';
 import { auth, googleProvider } from '@/lib/firebase';
 import { CREATE_FARMER_OR_BUYER_MUTATION } from "@/app/graphql/usersMutations";
 import Image from 'next/image';
-import { User, Lock, Mail, Phone, Home } from 'lucide-react';
+import { CircleUser, Lock, Mail, Phone, Home } from 'lucide-react';
 import { SignUpFormProps } from '@/types/SignupFormProps';
 import { FormState } from '@/types/FormState';
 
@@ -51,7 +51,7 @@ const SignUpForm: FC<SignUpFormProps> = ({ role, title, subtitle }) => {
     return `${form.firstName} ${form.middleName} ${form.lastName}`.replace(/\s+/g, ' ').trim();
   }, [form.firstName, form.middleName, form.lastName]);
 
-  const syncUserToBackend = async (firebaseUser, isGoogleUser = false) => {
+  const syncUserToBackend = async (firebaseUser:User, isGoogleUser = false) => {
     const fName = isGoogleUser ? firebaseUser.displayName?.split(' ')[0] || '' : form.firstName;
     const lName = isGoogleUser ? firebaseUser.displayName?.split(' ').slice(1).join(' ') || '' : form.lastName;
 
@@ -133,10 +133,10 @@ const SignUpForm: FC<SignUpFormProps> = ({ role, title, subtitle }) => {
 
         <div className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <InputField icon={<User size={16} />} name="firstName" type="text" placeholder="First Name *" value={form.firstName} onChange={handleChange} required aria-label="First Name" />
+            <InputField icon={<CircleUser size={16} />} name="firstName" type="text" placeholder="First Name *" value={form.firstName} onChange={handleChange} required aria-label="First Name" />
             <InputField icon={<span className="opacity-0 w-4"/>} name="lastName" type="text" placeholder="Last Name *" value={form.lastName} onChange={handleChange} required aria-label="Last Name" />
           </div>
-           <InputField icon={<User size={16} className="text-transparent" />} name="middleName" type="text" placeholder="Middle Name (Optional)" value={form.middleName} onChange={handleChange} aria-label="Middle Name" />
+           <InputField icon={<CircleUser size={16} className="text-transparent" />} name="middleName" type="text" placeholder="Middle Name (Optional)" value={form.middleName} onChange={handleChange} aria-label="Middle Name" />
 
           <InputField icon={<Mail size={16} />} name="email" type="email" placeholder="Email Address *" value={form.email} onChange={handleChange} required aria-label="Email Address" />
           
