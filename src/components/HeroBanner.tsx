@@ -1,9 +1,8 @@
-"use client";
+'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { auth } from '../lib/firebase'; // Import Firebase auth
-import { onAuthStateChanged } from 'firebase/auth';
+import Image from 'next/image';
 
 export default function CoffeeFarmerBanner() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -11,18 +10,15 @@ export default function CoffeeFarmerBanner() {
   const router = useRouter();
 
   const images = [
-    "/images/Firstone.jpg",
-    "/images/Coffee.jpg",
-    "/images/Rice.jpg"
+    '/images/Firstone.jpg',
+    '/images/Coffee.jpg',
+    '/images/Rice.jpg'
   ];
 
   const SLIDE_DURATION = 10000; // 10 seconds
 
   const startSlideTimer = () => {
-    // Clear existing timer
     if (intervalRef.current) clearTimeout(intervalRef.current);
-
-    // Start slide timer
     intervalRef.current = setTimeout(() => {
       setCurrentImageIndex(prevIndex => {
         const nextIndex = (prevIndex + 1) % images.length;
@@ -34,30 +30,23 @@ export default function CoffeeFarmerBanner() {
 
   useEffect(() => {
     startSlideTimer();
-
     return () => {
       if (intervalRef.current) clearTimeout(intervalRef.current);
     };
-  }, [currentImageIndex]); // Restart timer when image changes
+  }, [currentImageIndex]);
 
-  const handleDotClick = (index: number) => {
+  const handleDotClick = (index: React.SetStateAction<number>) => {
     if (index !== currentImageIndex) {
       setCurrentImageIndex(index);
-      // Timer will restart automatically due to useEffect dependency
     }
   };
 
+  const handleShopNowClick = () => {
+    router.push('/signup?role=BUYER');
+  };
+
   const handleSellNowClick = () => {
-    // Check authentication status
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        // User is logged in, redirect to seller dashboard
-        router.push('/dashboard');
-      } else {
-        // User is not logged in, redirect to login page
-        router.push('/login');
-      }
-    });
+    router.push('/signup?role=FARMER');
   };
 
   return (
@@ -68,11 +57,13 @@ export default function CoffeeFarmerBanner() {
         style={{ transform: `translateX(-${currentImageIndex * 100}%)` }}
       >
         {images.map((src, index) => (
-          <img
+          <Image
             key={index}
             src={src}
             alt={`Farm scene ${index + 1}`}
             className="w-full h-96 object-cover flex-shrink-0"
+            height={900}
+            width={600}
           />
         ))}
       </div>
@@ -98,7 +89,10 @@ export default function CoffeeFarmerBanner() {
           </h2>
 
           <div className="flex flex-col sm:flex-row gap-4">
-            <button className="group bg-white hover:bg-gray-50 text-gray-800 font-semibold py-2 px-6 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 hover:scale-105 text-sm">
+            <button 
+              onClick={handleShopNowClick}
+              className="group bg-white hover:bg-gray-50 text-gray-800 font-semibold py-2 px-6 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 hover:scale-105 text-sm"
+            >
               Shop Now 
               <span className="ml-2 group-hover:translate-x-1 inline-block transition-transform duration-300">→</span>
             </button>
