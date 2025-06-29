@@ -59,8 +59,17 @@ export default function LoginPage() {
   
       if (data?.Login?.token) {
         localStorage.setItem('token', data.Login.token);
-        
         if (data.Login.user) {
+          if(data?.Login?.user.role==="ADMINISTRATOR"){
+            router.push("/admin-dashboard")
+          } else if(data?.Login?.user.role==="WAREHOUSE_GUY") {
+            router.push("/warehouse-dashboard")
+          } else if(data?.Login?.user.role==="BUYER"){
+            router.push("/buyer-dashboard")
+          }
+          else{
+            router.push("dashboard")
+          }
           localStorage.setItem('user', JSON.stringify(data.Login.user));
         }
   
