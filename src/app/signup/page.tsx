@@ -11,7 +11,7 @@ import {
 } from 'firebase/auth';
 import { auth, googleProvider } from '@/lib/firebase';
 // import { CREATE_FARMER_MUTATION, CREATE_BUYER_MUTATION } from '@/graphql/mutations';
-import { CREATE_USER_MUTATION } from '../graphql/mutations';
+import { CREATE_USER_MUTATION } from '../graphql/createFarmerMutations';
 
 // A utility to split the full name
 const splitFullName = (fullName: string) => {
