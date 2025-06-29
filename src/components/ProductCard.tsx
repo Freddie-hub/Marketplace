@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import type { Product } from '@/lib/mock-data'; // Import the type for props
+import type { Product } from '@/lib/mock-data';
 import Image from 'next/image';
 
 interface ProductCardProps {
@@ -27,7 +27,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         <p className="text-sm text-gray-500 mb-3">{product.variety} Variety</p>
         
         <p className="text-2xl font-black text-[#476869] mb-4">
-          ${product.price.toFixed(2)} <span className="text-base font-normal text-gray-600">/ kg</span>
+          Ksh{product.price.toFixed(2)} <span className="text-base font-normal text-gray-600">/ kg</span>
         </p>
 
         <div className="flex items-center text-sm text-gray-600 mb-4">
