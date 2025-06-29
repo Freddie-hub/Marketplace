@@ -9,6 +9,7 @@ import { GoogleLogin, CredentialResponse } from "@react-oauth/google";
 import { jwtDecode, JwtPayload } from "jwt-decode";
 import { LoginFormData } from '@/types/LoginFormDataTypes';
 import { LoginResponse } from '@/types/LoginResponse';
+import Link from 'next/link';
 export interface GoogleJwtPayload extends JwtPayload {
   email?: string;
   given_name?: string;
@@ -199,18 +200,18 @@ export default function LoginPage() {
             </div>
 
         <div className="flex justify-between text-sm text-gray-600 font-medium">
-          <a 
+          <Link
             href="/reset-password" 
             className="text-[#BD011F] hover:underline transition"
           >
             Forgot password?
-          </a>
-          <a 
-            href="/signup" 
+          </Link>
+          <Link
+            href="/" 
             className="text-[#205D5A] hover:underline transition"
           >
             Create an account
-          </a>
+          </Link>
         </div>
       </div>
     </div>
