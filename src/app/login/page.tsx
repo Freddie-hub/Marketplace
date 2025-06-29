@@ -7,31 +7,8 @@ import LOGIN_MUTATION from '../graphql/loginMutation';
 import { toast } from 'react-toastify';
 import { GoogleLogin, CredentialResponse } from "@react-oauth/google";
 import { jwtDecode, JwtPayload } from "jwt-decode";
-
-interface LoginFormData {
-  email: string;
-  password: string;
-}
-
-interface LoginResponse {
-  Login: {  
-    status: string;
-    message: string;
-    token: string;
-    user?: User;
-  };
-}
-interface User{
-  email:string
-  password:string
-  Fname:string
-  role: "ADMINISTRATOR" | "FARMER" | "BUYER" | "WAREHOUSE_GUY"
-  Mname:string
-  Lname:string
-  phone:string
-  address:string
-  photo:string
-}
+import { LoginFormData } from '@/types/LoginFormDataTypes';
+import { LoginResponse } from '@/types/LoginResponse';
 export interface GoogleJwtPayload extends JwtPayload {
   email?: string;
   given_name?: string;
