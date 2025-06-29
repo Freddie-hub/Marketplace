@@ -2,37 +2,8 @@
 
 import React, { useState } from 'react';
 import { useMutation } from '@apollo/client';
-import { gql } from '@apollo/client';
-
-const CREATE_WAREHOUSE_WITH_MANAGER_MUTATION = gql`
-  mutation CreateWarehouseWithManager($args: WarehouseRegistrationArgs) {
-    createWarehouseWithManager(args: $args) {
-      status
-      message
-      token
-    }
-  }
-`;
-
-interface WarehouseFormData {
-  // Manager Details
-  email: string;
-  password: string;
-  confirmPassword: string;
-  Fname: string;
-  Mname?: string;
-  Lname: string;
-  phone?: string;
-  address?: string;
-  
-  // Warehouse Details
-  warehouseName: string;
-  warehouseLocation: string;
-  warehouseAddress?: string;
-  warehouseCapacity?: number;
-  warehousePhone?: string;
-  warehouseEmail?: string;
-}
+import { WarehouseFormData } from '@/types/WarehouseFormData';
+import { CREATE_WAREHOUSE_WITH_MANAGER_MUTATION } from '@/app/graphql/usersMutations';
 
 interface FormErrors {
   [key: string]: string;
@@ -63,8 +34,6 @@ const WarehouseManagerSignup: React.FC = () => {
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
-
-    // Required fields validation
     if (!formData.email) newErrors.email = 'Email is required';
     if (!formData.password) newErrors.password = 'Password is required';
     if (!formData.confirmPassword) newErrors.confirmPassword = 'Please confirm your password';
@@ -73,23 +42,19 @@ const WarehouseManagerSignup: React.FC = () => {
     if (!formData.warehouseName) newErrors.warehouseName = 'Warehouse name is required';
     if (!formData.warehouseLocation) newErrors.warehouseLocation = 'Warehouse location is required';
 
-    // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (formData.email && !emailRegex.test(formData.email)) {
       newErrors.email = 'Please enter a valid email address';
     }
 
-    // Password validation
     if (formData.password && formData.password.length < 8) {
       newErrors.password = 'Password must be at least 8 characters long';
     }
 
-    // Password confirmation
     if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = 'Passwords do not match';
     }
 
-    // Phone validation (if provided)
     if (formData.phone && !/^\+?[\d\s-()]+$/.test(formData.phone)) {
       newErrors.phone = 'Please enter a valid phone number';
     }
@@ -105,7 +70,6 @@ const WarehouseManagerSignup: React.FC = () => {
       [name]: type === 'number' ? (value ? parseInt(value) : undefined) : value
     }));
 
-    // Clear error when user starts typing
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
@@ -122,7 +86,6 @@ const WarehouseManagerSignup: React.FC = () => {
       const { data } = await createWarehouseWithManager({
         variables: {
           args: {
-            // Manager data
             email: formData.email,
             password: formData.password,
             Fname: formData.Fname,
@@ -130,8 +93,6 @@ const WarehouseManagerSignup: React.FC = () => {
             Lname: formData.Lname,
             phone: formData.phone || undefined,
             address: formData.address || undefined,
-            
-            // Warehouse data
             warehouseName: formData.warehouseName,
             warehouseLocation: formData.warehouseLocation,
             warehouseAddress: formData.warehouseAddress || undefined,
@@ -143,12 +104,9 @@ const WarehouseManagerSignup: React.FC = () => {
       });
 
       if (data?.createWarehouseWithManager?.status === 'success') {
-        // Handle successful registration
         console.log('Registration successful:', data.createWarehouseWithManager.message);
-        // Redirect or show success message
         if (data.createWarehouseWithManager.token) {
           localStorage.setItem('authToken', data.createWarehouseWithManager.token);
-          // Redirect to dashboard
         }
       } else {
         setErrors({ general: data?.createWarehouseWithManager?.message || 'Registration failed' });
