@@ -1,6 +1,5 @@
-export interface RequestPasswordReset {
+export interface RequestPasswordResetVariables {
     args: {
       email: string;
     };
   }
-  

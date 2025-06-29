@@ -1,6 +1,7 @@
 export interface RequestPasswordResetResponse {
-    resetPassword: {
+    requestPasswordReset: {
       status: string;
       message: string;
     };
   }
+  
