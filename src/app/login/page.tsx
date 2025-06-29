@@ -14,11 +14,11 @@ interface LoginFormData {
 }
 
 interface LoginResponse {
-  login: {
+  Login: {  
     status: string;
     message: string;
     token: string;
-    user: User;
+    user?: User;
   };
 }
 interface User{
@@ -65,7 +65,7 @@ export default function LoginPage() {
       toast.error('Please fill in all fields');
       return;
     }
-
+  
     setIsSubmitting(true);
     
     try {
@@ -77,21 +77,21 @@ export default function LoginPage() {
           }
         }
       });
-
+  
       console.log("Login response:", data);
-
-      if (data?.login?.token) {
-        localStorage.setItem('token', data.login.token);
+  
+      if (data?.Login?.token) {
+        localStorage.setItem('token', data.Login.token);
         
-        if (data.login.user) {
-          localStorage.setItem('user', JSON.stringify(data.login.user));
+        if (data.Login.user) {
+          localStorage.setItem('user', JSON.stringify(data.Login.user));
         }
-
-        toast.success(data.login.message || 'Login successful!');
+  
+        toast.success(data.Login.message || 'Login successful!');
         
         router.push('/dashboard');
       } else {
-        throw new Error(data?.login?.message || 'Login failed: No token received from server.');
+        throw new Error(data?.Login?.message || 'Login failed: No token received from server.');
       }
     } catch (err) {
       console.error('Login error:', err);
@@ -116,7 +116,7 @@ export default function LoginPage() {
           variables: { email: googleEmail, password: "" },
         });
 
-        if (response.data?.login.status === "Success") {
+        if (response.data?.Login.status === "Success") {
           toast.success("Welcome back!", {
           });
           router.push("/dashboard")
