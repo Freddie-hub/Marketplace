@@ -82,10 +82,6 @@ export default function ResetPasswordConfirm() {
 
       if (result.data?.resetPassword?.status === "Success") {
         alert(result.data.resetPassword.message);
-    
-        if (result.data.resetPassword.token) {
-          localStorage.setItem('authToken', result.data.resetPassword.token);
-        }
 
         router.push("/login");
       } else {
