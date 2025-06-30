@@ -102,7 +102,7 @@ const QuickActions = () => {
       <div className="mt-6 pt-6 border-t border-slate-200/60">
         <button 
           className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-slate-900 text-white rounded-xl hover:bg-slate-800 transition-colors duration-200 group"
-          onClick={() => router.push("/dashboard/productForm")}
+          onClick={() => router.push("/dashboard/productFormgit aff")}
         >
           <Plus size={18} className="group-hover:rotate-90 transition-transform duration-200" />
           <span className="font-medium">Create New Listing</span>
