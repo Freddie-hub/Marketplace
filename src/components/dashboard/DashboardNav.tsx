@@ -13,7 +13,7 @@ const DashboardNav = () => {
     { name: 'Overview', icon: BarChart3, color: '#0f766e' },
     { name: 'Products', icon: Package, color: '#ea580c' },
     { name: 'Orders', icon: ShoppingCart, color: '#7c3aed' },
-    { name: 'Messages', icon: MessageCircle, color: '#dc2626', badge: 3 },
+    { name: 'Messages', icon: MessageCircle, color: '#dc2626', badge: 0},
   ];
 
   return (
@@ -83,7 +83,7 @@ const DashboardNav = () => {
       {/* Bottom section */}
       <div className="mt-auto pt-8 border-t border-slate-200/60">
         <div className="text-xs text-slate-400 text-center">
-          Version 2.1.0
+          Version 1.0
         </div>
       </div>
     </div>
