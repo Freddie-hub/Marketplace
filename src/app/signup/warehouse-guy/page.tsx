@@ -98,7 +98,7 @@ const WarehouseManagerSignup: React.FC = () => {
             warehouse_name: formData.warehouseName,
             warehouse_location: formData.warehouseLocation,
             warehouse_address: formData.warehouseAddress || undefined,
-            warehouse_capacity: formData.warehouseCapacity ? formData.warehouseCapacity.toString() : undefined, 
+            warehouse_capacity: formData.warehouseCapacity ? formData.warehouseCapacity : undefined, 
             warehouse_phone: formData.warehousePhone || undefined,
             warehouse_email: formData.warehouseEmail || undefined,
           }
