@@ -69,23 +69,19 @@ const SignUpForm: FC<SignUpFormProps> = ({ role, title, subtitle }) => {
           Mname: form.middleName,
           phone: form.phone || null,
           address: form.address || null,
-          isGoogleUser: false,
-          googleId: null,
           password: form.password,
           role,
+          photo:""
         }
       };
 
       const result = await createFarmerOrBuyer({ variables });
-      const backendToken = result.data?.createFarmerOrBuyer?.token;
+      const succesfulSignup = result.data?.createFarmerOrBuyer?.status === "Success";
 
-      if (backendToken) {
-        localStorage.setItem('token', backendToken);
-        router.push('/dashboard'); 
-      } else {
-        toast.info("Authentication token not received.");
-        router.push("/login")
-      }
+      if (succesfulSignup) {
+        toast.success(result.data?.createFarmerOrBuyer?.message)
+        router.push('/login'); 
+      } 
     } catch (err: any) {
       setError(err.message);
     }
@@ -127,9 +123,9 @@ const SignUpForm: FC<SignUpFormProps> = ({ role, title, subtitle }) => {
         localStorage.setItem('token', backendToken);
         router.push('/dashboard');
       } else {
-        throw new Error("Authentication token not received.");
-      }
+        toast.info("Authentication token not received.");
       router.push("/login")
+      }
     } catch (err: any) {
       setError(err.message);
     }
