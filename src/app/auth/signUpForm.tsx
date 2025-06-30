@@ -71,19 +71,34 @@ const SignUpForm: FC<SignUpFormProps> = ({ role, title, subtitle }) => {
           address: form.address || null,
           password: form.password,
           role,
-          photo:""
+          photo: ""
         }
       };
 
-      const result = await createFarmerOrBuyer({ variables });
-      const succesfulSignup = result.data?.createFarmerOrBuyer?.status === "Success";
+      console.log('Sending signup request with variables:', variables);
 
-      if (succesfulSignup) {
-        toast.success(result.data?.createFarmerOrBuyer?.message)
-        router.push('/login'); 
-      } 
+      const result = await createFarmerOrBuyer({ variables });
+      console.log('Signup result:', result);
+
+      const successfulSignup = result.data?.createFarmerOrBuyer?.status === "Success";
+
+      if (successfulSignup) {
+        const message = result.data?.createFarmerOrBuyer?.message || 'Account created successfully!';
+        toast.success(message);
+        
+        setTimeout(() => {
+          router.push('/login');
+        }, 1000);
+      } else {
+        const errorMessage = result.data?.createFarmerOrBuyer?.message || 'Signup failed. Please try again.';
+        setError(errorMessage);
+        toast.error(errorMessage);
+      }
     } catch (err: any) {
-      setError(err.message);
+      console.error('Signup error:', err);
+      const errorMessage = err.message || 'An error occurred during signup.';
+      setError(errorMessage);
+      toast.error(errorMessage);
     }
   };
 
@@ -121,18 +136,27 @@ const SignUpForm: FC<SignUpFormProps> = ({ role, title, subtitle }) => {
 
       if (backendToken) {
         localStorage.setItem('token', backendToken);
-        router.push('/dashboard');
+        toast.success('Google signup successful!');
+        setTimeout(() => {
+          router.push('/dashboard');
+        }, 1000);
       } else {
         toast.info("Authentication token not received.");
-      router.push("/login")
+        setTimeout(() => {
+          router.push("/login");
+        }, 1000);
       }
     } catch (err: any) {
-      setError(err.message);
+      console.error('Google signup error:', err); // Debug log
+      const errorMessage = err.message || 'Google Sign-In failed.';
+      setError(errorMessage);
+      toast.error(errorMessage);
     }
   };
 
   const handleGoogleError = () => {
     setError('Google Sign-In failed. Please try again.');
+    toast.error('Google Sign-In failed. Please try again.');
   };
 
   return (
