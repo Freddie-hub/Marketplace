@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useState } from 'react';
@@ -10,6 +11,8 @@ import { jwtDecode, JwtPayload } from "jwt-decode";
 import { LoginFormData } from '@/types/LoginFormDataTypes';
 import { LoginResponse } from '@/types/LoginResponse';
 import Link from 'next/link';
+import { User } from '@/types/UserTypes';
+
 export interface GoogleJwtPayload extends JwtPayload {
   email?: string;
   given_name?: string;
@@ -38,6 +41,18 @@ export default function LoginPage() {
     await handleLogin();
   };
 
+  const navigateBasedOnRole = (user: User) => {
+    if (user.role === "ADMINISTRATOR") {
+      router.push("/admin-dashboard");
+    } else if (user.role === "WAREHOUSE_GUY") {
+      router.push("/warehouse-dashboard");
+    } else if (user.role === "BUYER") {
+      router.push("/buyer-dashboard");
+    } else {
+      router.push("/dashboard");
+    }
+  };
+
   const handleLogin = async () => {
     if (!form.email || !form.password) {
       toast.error('Please fill in all fields');
@@ -58,67 +73,87 @@ export default function LoginPage() {
   
       console.log("Login response:", data);
   
-      if (data?.Login?.token) {
+      if (data?.Login?.status === "Success" && data?.Login?.token) {
         localStorage.setItem('token', data.Login.token);
-        if (data.Login.user) {
-          if(data?.Login?.user.role==="ADMINISTRATOR"){
-            router.push("/admin-dashboard")
-          } else if(data?.Login?.user.role==="WAREHOUSE_GUY") {
-            router.push("/warehouse-dashboard")
-          } else if(data?.Login?.user.role==="BUYER"){
-            router.push("/buyer-dashboard")
-          }
-          else{
-            router.push("dashboard")
-          }
-          localStorage.setItem('user', JSON.stringify(data.Login.user));
-        }
-  
-        toast.success(data.Login.message || 'Login successful!');
         
-        router.push('/dashboard');
+        if (data.Login.user) {
+          localStorage.setItem('user', JSON.stringify(data.Login.user));
+          toast.success(data.Login.message || 'Login successful!');
+          navigateBasedOnRole(data.Login.user);
+        } else {
+          router.push('/dashboard');
+        }
       } else {
-        throw new Error(data?.Login?.message || 'Login failed: No token received from server.');
+        throw new Error(data?.Login?.message || 'Login failed: Invalid response from server.');
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('Login error:', err);
-      toast.error('An error occurred during login');
+      
+      if (err.message) {
+        toast.error(err.message);
+      } else {
+        toast.error('An error occurred during login');
+      }
     } finally {
       setIsSubmitting(false);
     }
   };
+
   const handleGoogleLogin = async (credentialResponse: CredentialResponse) => {
+    setIsSubmitting(true);
+    
     try {
       if (credentialResponse.credential) {
         const decodedToken = jwtDecode<GoogleJwtPayload>(credentialResponse.credential);
         const googleEmail = decodedToken.email;
 
         if (!googleEmail) {
-          toast.error("Google login failed", {
-          });
+          toast.error("Google login failed: No email found");
           return;
         }
 
-        const response = await login({
-          variables: { email: googleEmail, password: "" },
+        const { data } = await login({
+          variables: { 
+            args: {
+              email: googleEmail, 
+              password: "" 
+            }
+          },
         });
 
-        if (response.data?.Login.status === "Success") {
-          toast.success("Welcome back!", {
-          });
-          router.push("/dashboard")
+        if (data?.Login?.status === "Success" && data?.Login?.token) {
+          localStorage.setItem('token', data.Login.token);
+          
+          if (data.Login.user) {
+            localStorage.setItem('user', JSON.stringify(data.Login.user));
+          }
+          
+          toast.success(data.Login.message || "Welcome back!");
+          
+          // Navigate based on role
+          if (data.Login.user) {
+            navigateBasedOnRole(data.Login.user);
+          } else {
+            router.push("/dashboard");
+          }
         } else {
-          toast.error("Google login failed");
+          throw new Error(data?.Login?.message || "Google login failed");
         }
       } else {
-        toast.error("Google login failed", {
-        });
+        toast.error("Google login failed: No credential received");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Google Login Error:", error);
-      toast.error("Google login failed", {
-      });
+      
+      if (error.message.includes("Google Sign-In")) {
+        toast.error("This account is linked to Google. Please use Google sign-in.");
+      } else if (error.message.includes("No account found")) {
+        toast.error("No account found. Please sign up first.");
+      } else {
+        toast.error(error.message || "Google login failed");
+      }
     } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -156,7 +191,6 @@ export default function LoginPage() {
             />
           </div>
 
-          {/* Password Input */}
           <div className="relative">
             <input
               name="password"
@@ -186,18 +220,18 @@ export default function LoginPage() {
             {isLoading ? 'Logging in...' : 'Log In'}
           </button>
         </form>
-                    <div className="flex justify-center">
-              <GoogleLogin
-                size="large"
-                shape="rectangular"
-                theme="outline"
-                onSuccess={handleGoogleLogin}
-                onError={() => {
-                  toast.error("Google login failed", 
-                  );
-                }}
-              />
-            </div>
+
+        <div className="flex justify-center">
+          <GoogleLogin
+            size="large"
+            shape="rectangular"
+            theme="outline"
+            onSuccess={handleGoogleLogin}
+            onError={() => {
+              toast.error("Google login failed");
+            }}
+          />
+        </div>
 
         <div className="flex justify-between text-sm text-gray-600 font-medium">
           <Link
