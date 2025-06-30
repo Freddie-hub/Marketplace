@@ -14,7 +14,6 @@ export const CREATE_FARMER_OR_BUYER_MUTATION = gql`
     createFarmer(args: $args) {
       status
       message
-      token
     }
   }
 `;

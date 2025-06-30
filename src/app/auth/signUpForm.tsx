@@ -10,6 +10,7 @@ import { CircleUser, Lock, Mail, Phone, Home } from 'lucide-react';
 import { SignUpFormProps } from '@/types/SignupFormProps';
 import { FormState } from '@/types/FormState';
 import { GoogleLogin } from '@react-oauth/google';
+import { toast } from 'react-toastify';
 
 interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   icon: React.ReactNode;
@@ -82,7 +83,8 @@ const SignUpForm: FC<SignUpFormProps> = ({ role, title, subtitle }) => {
         localStorage.setItem('token', backendToken);
         router.push('/dashboard'); 
       } else {
-        throw new Error("Authentication token not received.");
+        toast.info("Authentication token not received.");
+        router.push("/login")
       }
     } catch (err: any) {
       setError(err.message);
@@ -127,6 +129,7 @@ const SignUpForm: FC<SignUpFormProps> = ({ role, title, subtitle }) => {
       } else {
         throw new Error("Authentication token not received.");
       }
+      router.push("/login")
     } catch (err: any) {
       setError(err.message);
     }
