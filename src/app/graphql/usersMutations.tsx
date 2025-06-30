@@ -26,10 +26,12 @@ export const CREATE_WAREHOUSE_WITH_MANAGER_MUTATION = gql`
       token
       user {
         id
-        username
         email
         role
         password
+        Mname
+        Lname
+        Fname
       }
     }
   }

@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useMutation } from '@apollo/client';
 import { WarehouseFormData } from '@/types/WarehouseFormData';
 import { CREATE_WAREHOUSE_WITH_MANAGER_MUTATION } from '@/app/graphql/usersMutations';
+import { useRouter } from 'next/navigation';
 
 interface FormErrors {
   [key: string]: string;
@@ -29,7 +30,7 @@ const WarehouseManagerSignup: React.FC = () => {
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
-
+   const router = useRouter()
   const [createWarehouseWithManager] = useMutation(CREATE_WAREHOUSE_WITH_MANAGER_MUTATION);
 
   const validateForm = (): boolean => {
@@ -104,9 +105,11 @@ const WarehouseManagerSignup: React.FC = () => {
       });
 
       if (data?.createWarehouseWithManager?.status === 'success') {
+        console.log("debuging the data:::", data)
         console.log('Registration successful:', data.createWarehouseWithManager.message);
         if (data.createWarehouseWithManager.token) {
           localStorage.setItem('authToken', data.createWarehouseWithManager.token);
+          router.push("/login")
         }
       } else {
         setErrors({ general: data?.createWarehouseWithManager?.message || 'Registration failed' });
