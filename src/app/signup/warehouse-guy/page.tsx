@@ -5,6 +5,7 @@ import { useMutation } from '@apollo/client';
 import { WarehouseFormData } from '@/types/WarehouseFormData';
 import { CREATE_WAREHOUSE_WITH_MANAGER_MUTATION } from '@/app/graphql/usersMutations';
 import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
 
 interface FormErrors {
   [key: string]: string;
@@ -80,9 +81,9 @@ const WarehouseManagerSignup: React.FC = () => {
     e.preventDefault();
     
     if (!validateForm()) return;
-
+  
     setIsLoading(true);
-
+  
     try {
       const { data } = await createWarehouseWithManager({
         variables: {
@@ -94,22 +95,23 @@ const WarehouseManagerSignup: React.FC = () => {
             Lname: formData.Lname,
             phone: formData.phone || undefined,
             address: formData.address || undefined,
-            warehouseName: formData.warehouseName,
-            warehouseLocation: formData.warehouseLocation,
-            warehouseAddress: formData.warehouseAddress || undefined,
-            warehouseCapacity: formData.warehouseCapacity || undefined,
-            warehousePhone: formData.warehousePhone || undefined,
-            warehouseEmail: formData.warehouseEmail || undefined,
+            warehouse_name: formData.warehouseName,
+            warehouse_location: formData.warehouseLocation,
+            warehouse_address: formData.warehouseAddress || undefined,
+            warehouse_capacity: formData.warehouseCapacity ? formData.warehouseCapacity.toString() : undefined, 
+            warehouse_phone: formData.warehousePhone || undefined,
+            warehouse_email: formData.warehouseEmail || undefined,
           }
         }
       });
-
+  
       if (data?.createWarehouseWithManager?.status === 'success') {
-        console.log("debuging the data:::", data)
+        console.log("debugging the data:::", data);
+        toast.success("Warehouse Guy Registered Successfully")
         console.log('Registration successful:', data.createWarehouseWithManager.message);
         if (data.createWarehouseWithManager.token) {
           localStorage.setItem('authToken', data.createWarehouseWithManager.token);
-          router.push("/login")
+          router.push("/login");
         }
       } else {
         setErrors({ general: data?.createWarehouseWithManager?.message || 'Registration failed' });
