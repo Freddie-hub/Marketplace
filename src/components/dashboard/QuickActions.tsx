@@ -13,7 +13,7 @@ const QuickActions = () => {
       description: "List a new product for sale",
       icon: Package,
       color: "#0f766e",
-      onClick: () => router.push("/listing"),
+      onClick: () => router.push("/dashboard/productForm"),
     },
     {
       id: 2,
