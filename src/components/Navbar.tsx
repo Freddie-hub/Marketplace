@@ -1,19 +1,15 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { onAuthStateChanged, signOut, User as FirebaseUser } from 'firebase/auth';
 import {Search,ShoppingCart,User,LayoutDashboard,LogOut,Store,Settings,Package,UserCheck,Shield,Warehouse,} from 'lucide-react';
-import { auth } from '@/lib/firebase';
 import { toast } from 'react-toastify';
-import { StoredUser } from '@/types/StoredUser';
+import useAuth from '@/lib/useAuth';
 
 export default function NavigationBar() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [user, setUser] = useState<FirebaseUser | null>(null);
-  const [storedUser, setStoredUser] = useState<StoredUser | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { user: storedUser, loading, isAuthenticated, logout: authLogout } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
 
@@ -23,33 +19,10 @@ export default function NavigationBar() {
   const isBuyerDashboard = pathname?.startsWith('/buyer-dashboard') ?? false;
   const isAnyDashboard = isDashboard || isAdminDashboard || isWarehouseDashboard || isBuyerDashboard;
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      setUser(firebaseUser);
-      
-      try {
-        const storedUserData = localStorage.getItem('user');
-        if (storedUserData) {
-          const parsedUser = JSON.parse(storedUserData) as StoredUser;
-          setStoredUser(parsedUser);
-        }
-      } catch (error) {
-        console.error('Error parsing stored user data:', error);
-      }
-      
-      setLoading(false);
-    });
-
-    return () => unsubscribe();
-  }, []);
-
   const handleLogout = async () => {
     try {
-      await signOut(auth);
+      authLogout();
       toast.success("You have been logged out successfully");
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      setStoredUser(null);
       router.push("/");
     } catch (error) {
       console.error('Error signing out:', error);
@@ -109,14 +82,8 @@ export default function NavigationBar() {
     if (storedUser?.displayName) {
       return storedUser.displayName;
     }
-    if (user?.displayName) {
-      return user.displayName;
-    }
     if (storedUser?.email) {
       return storedUser.email.split('@')[0];
-    }
-    if (user?.email) {
-      return user.email.split('@')[0];
     }
     return 'User';
   };
@@ -148,6 +115,19 @@ export default function NavigationBar() {
     return !isAdminDashboard && !isWarehouseDashboard && (!isAnyDashboard || isBuyerDashboard);
   };
 
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!searchQuery.trim()) return;
+
+    if (isBuyerDashboard) {
+      router.push(`/marketplace/search?q=${encodeURIComponent(searchQuery)}`);
+    } else {
+      router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
+    }
+    
+    console.log('Search query:', searchQuery);
+  };
+
   if (loading) {
     return (
       <nav className="sticky top-0 z-50 w-full bg-white border-b border-gray-200 px-6 py-6 shadow-lg">
@@ -174,11 +154,7 @@ export default function NavigationBar() {
         {shouldShowSearch() ? (
           <div className="flex-1 max-w-2xl mx-auto w-full">
             <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                // Implement search logic based on user role
-                console.log('Search query:', searchQuery);
-              }}
+              onSubmit={handleSearchSubmit}
               className="relative flex"
               role="search"
             >
@@ -208,7 +184,7 @@ export default function NavigationBar() {
         )}
 
         <div className="flex items-center space-x-4 text-sm">
-          {user || storedUser ? (
+          {isAuthenticated ? (
             <>
               <Link
                 href={isAnyDashboard ? '/' : getDashboardLink()}
@@ -315,3 +291,5 @@ export default function NavigationBar() {
     </nav>
   );
 }
+
+export { useAuth };
