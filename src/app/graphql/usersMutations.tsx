@@ -1,11 +1,12 @@
 import { gql } from '@apollo/client';
+
 export const CREATE_USER_MUTATION = gql`
-mutation CreateFarmer($args: FarmerArgs) {
-  createFarmer(args: $args) {
-    status
-    message
+  mutation CreateFarmer($args: FarmerArgs) {
+    createFarmer(args: $args) {
+      status
+      message
+    }
   }
-}
 `;
 
 export const CREATE_FARMER_OR_BUYER_MUTATION = gql`
