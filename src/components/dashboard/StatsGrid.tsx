@@ -6,8 +6,8 @@ const StatsGrid = () => {
     {
       id: 1,
       title: "Products Listed",
-      value: "24",
-      change: "+12%",
+      value: "0",
+      change: "+0%",
       changeType: "positive",
       icon: Package,
       color: "#0f766e"
@@ -15,8 +15,8 @@ const StatsGrid = () => {
     {
       id: 2,
       title: "Monthly Earnings",
-      value: "KSh 45,200",
-      change: "+23%",
+      value: "KSh 0",
+      change: "+0%",
       changeType: "positive",
       icon: DollarSign,
       color: "#ea580c"
@@ -24,8 +24,8 @@ const StatsGrid = () => {
     {
       id: 3,
       title: "Active Orders",
-      value: "8",
-      change: "+5%",
+      value: "0",
+      change: "+0%",
       changeType: "positive",
       icon: ShoppingCart,
       color: "#7c3aed"
@@ -33,7 +33,7 @@ const StatsGrid = () => {
     {
       id: 4,
       title: "New Messages",
-      value: "3",
+      value: "0",
       change: "0%",
       changeType: "neutral",
       icon: MessageSquare,
