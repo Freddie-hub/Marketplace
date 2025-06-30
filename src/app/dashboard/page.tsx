@@ -1,5 +1,4 @@
 'use client';
-
 import NavigationBar from '@/components/Navbar';
 import DashboardNav from '@/components/dashboard/DashboardNav';
 import StatsGrid from '@/components/dashboard/StatsGrid';
@@ -9,35 +8,41 @@ import Footer from '@/components/footer';
 
 export default function DashboardPage() {
   return (
-    <>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20">
       <NavigationBar />
-
-      <div className="flex min-h-screen">
+      
+      <div className="flex">
         {/* Sidebar */}
-        <div className="w-64 bg-white shadow-md p-4">
+        <div className="w-72 bg-white/80 backdrop-blur-sm border-r border-slate-200/60 shadow-sm">
           <DashboardNav />
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 p-6 space-y-2">
-          {/* Stats Grid */}
-          <div className="w-[95%] mx-auto rounded-xl bg-white shadow-md p-1">
-            <StatsGrid />
-          </div>
-
-          {/* Bottom Section: Quick Actions and Recent Sales */}
-          <div className="w-[95%] mx-auto grid grid-cols-1 md:grid-cols-2 gap-2">
-            <div className="rounded-xl bg-white shadow-md p-1">
-              <QuickActions />
+        <div className="flex-1 p-8">
+          <div className="max-w-7xl mx-auto space-y-8">
+            {/* Page Header */}
+            <div className="mb-8">
+              <h1 className="text-3xl font-bold text-slate-900 mb-2">Dashboard Overview</h1>
+              <p className="text-slate-600">Welcome back! Heres whats happening with your business today.</p>
             </div>
-            <div className="rounded-xl bg-white shadow-md p-1">
-              <RecentSales />
+
+            <div className="bg-white/70 backdrop-blur-sm rounded-2xl border border-slate-200/60 shadow-sm p-6">
+              <StatsGrid />
+            </div>
+
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+              <div className="bg-white/70 backdrop-blur-sm rounded-2xl border border-slate-200/60 shadow-sm">
+                <QuickActions />
+              </div>
+              <div className="bg-white/70 backdrop-blur-sm rounded-2xl border border-slate-200/60 shadow-sm">
+                <RecentSales />
+              </div>
             </div>
           </div>
         </div>
       </div>
-
+      
       <Footer />
-    </>
+    </div>
   );
 }

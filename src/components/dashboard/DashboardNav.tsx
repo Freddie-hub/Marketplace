@@ -10,69 +10,82 @@ const DashboardNav = () => {
   const [activeTab, setActiveTab] = useState('Overview');
 
   const navigationItems = [
-    { name: 'Overview', icon: BarChart3, iconColor: '#00A79D', textColor: '#205D5A' },
-    { name: 'Products', icon: Package, iconColor: '#FCB000', textColor: '#205D5A' },
-    { name: 'Orders', icon: ShoppingCart, iconColor: '#FF990B', textColor: '#205D5A' },
-    { name: 'Messages', icon: MessageCircle, iconColor: '#BD011F', textColor: '#205D5A', badge: 3 },
+    { name: 'Overview', icon: BarChart3, color: '#0f766e' },
+    { name: 'Products', icon: Package, color: '#ea580c' },
+    { name: 'Orders', icon: ShoppingCart, color: '#7c3aed' },
+    { name: 'Messages', icon: MessageCircle, color: '#dc2626', badge: 3 },
   ];
 
   return (
-    <div style={{ backgroundColor: '#FAFBFF' }} className="h-full">
-      {/* Sidebar Navigation */}
-      <nav className="flex flex-col space-y-2 p-2">
+    <div className="h-full p-6">
+      {/* Logo/Brand Section */}
+      <div className="mb-8 pb-6 border-b border-slate-200/60">
+        <h2 className="text-xl font-bold text-slate-800">Dashboard</h2>
+        <p className="text-sm text-slate-500 mt-1">Manage your business</p>
+      </div>
+
+      {/* Navigation Items */}
+      <nav className="space-y-2">
         {navigationItems.map((item) => {
           const IconComponent = item.icon;
           const isActive = activeTab === item.name;
-
+          
           return (
             <button
               key={item.name}
               onClick={() => setActiveTab(item.name)}
-              className={`flex items-center space-x-3 px-4 py-2 rounded-lg transition-all duration-300 relative group ${
-                isActive
-                  ? 'bg-gradient-to-r from-gray-50 to-gray-100'
-                  : 'hover:bg-gray-50'
-              }`}
+              className={`
+                w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm
+                transition-all duration-200 relative group
+                ${isActive 
+                  ? 'bg-slate-100 text-slate-900 shadow-sm' 
+                  : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                }
+              `}
             >
-              <div className="relative">
+              {/* Active indicator */}
+              {isActive && (
+                <div 
+                  className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-8 rounded-full"
+                  style={{ backgroundColor: item.color }}
+                />
+              )}
+
+              <div className="relative flex items-center">
                 <IconComponent
                   size={20}
-                  style={{ color: item.iconColor }}
-                  className="transition-transform duration-200 group-hover:scale-110"
+                  style={{ color: isActive ? item.color : 'inherit' }}
+                  className="transition-colors duration-200"
                 />
                 {item.badge && (
-                  <span
-                    className="absolute -top-1 -right-1 text-[10px] text-white rounded-full w-4 h-4 flex items-center justify-center font-bold animate-pulse shadow"
-                    style={{ backgroundColor: '#BD011F' }}
-                  >
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
                     {item.badge}
                   </span>
                 )}
               </div>
-              <span
-                className="text-sm font-medium whitespace-nowrap transition-colors duration-200"
-                style={{ color: item.textColor }}
-              >
+              
+              <span className="flex-1 text-left">
                 {item.name}
               </span>
 
-              {/* Active indicator */}
-              {isActive && (
+              {/* Hover indicator */}
+              {!isActive && (
                 <div
-                  className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-6 rounded-full"
-                  style={{ backgroundColor: item.iconColor }}
+                  className="absolute left-0 top-1/2 transform -translate-y-1/2 w-0 h-8 rounded-full transition-all duration-200 group-hover:w-1"
+                  style={{ backgroundColor: item.color }}
                 />
               )}
-
-              {/* Hover indicator */}
-              <div
-                className="absolute left-0 top-1/2 transform -translate-y-1/2 w-0 h-6 rounded-full group-hover:w-1 transition-all duration-300"
-                style={{ backgroundColor: item.iconColor }}
-              />
             </button>
           );
         })}
       </nav>
+
+      {/* Bottom section */}
+      <div className="mt-auto pt-8 border-t border-slate-200/60">
+        <div className="text-xs text-slate-400 text-center">
+          Version 2.1.0
+        </div>
+      </div>
     </div>
   );
 };

@@ -1,76 +1,112 @@
 "use client";
-
 import React from "react";
 import { useRouter } from "next/navigation";
-import { Package, MessageSquare, DollarSign, TrendingUp } from "lucide-react";
+import { Package, MessageSquare, DollarSign, TrendingUp, Plus, ArrowRight } from "lucide-react";
 
 const QuickActions = () => {
   const router = useRouter();
-
+  
   const actions = [
     {
       id: 1,
-      title: "Add Product",
+      title: "Add New Product",
+      description: "List a new product for sale",
       icon: Package,
-      bgColor: "bg-gradient-to-br from-[#00A79D] to-[#78CCD0]",
-      iconColor: "text-white",
+      color: "#0f766e",
       onClick: () => router.push("/listing"),
     },
     {
       id: 2,
       title: "Check Messages",
+      description: "View customer inquiries",
       icon: MessageSquare,
-      bgColor: "bg-gradient-to-br from-[#FCB000] to-[#FF990B]",
-      iconColor: "text-white",
+      color: "#dc2626",
+      badge: "3 new"
     },
     {
       id: 3,
       title: "View Payments",
+      description: "Check transaction history",
       icon: DollarSign,
-      bgColor: "bg-gradient-to-br from-[#BD011F] to-[#720218]",
-      iconColor: "text-white",
+      color: "#ea580c",
     },
     {
       id: 4,
-      title: "Sales Report",
+      title: "Sales Analytics",
+      description: "Review performance metrics",
       icon: TrendingUp,
-      bgColor: "bg-gradient-to-br from-[#FABFFF] to-[#78CCD0]",
-      iconColor: "text-[#205D5A]",
+      color: "#7c3aed",
     },
   ];
 
   return (
-    <div className="max-w-4xl mx-auto p-8 bg-gradient-to-br from-gray-50 to-white min-h-screen">
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-[#00A79D] to-[#205D5A] bg-clip-text text-transparent">
-          Quick Actions
-        </h1>
+    <div className="p-6">
+      <div className="mb-6">
+        <h2 className="text-xl font-semibold text-slate-800 mb-1">Quick Actions</h2>
+        <p className="text-slate-600 text-sm">Frequently used features and shortcuts</p>
       </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {actions.map((action) => {
           const IconComponent = action.icon;
+          
           return (
-            <div
+            <button
               key={action.id}
               onClick={action.onClick}
-              className={`
-                ${action.bgColor}
-                rounded-2xl p-8 cursor-pointer
-                shadow-md
-              `}
+              className="group relative bg-white rounded-xl p-6 border border-slate-200/60 shadow-sm hover:shadow-md transition-all duration-200 text-left hover:-translate-y-0.5"
             >
-              <div className="flex flex-col items-center text-center space-y-4">
-                <div className={`${action.iconColor}`}>
-                  <IconComponent size={48} strokeWidth={2} />
+              <div className="flex items-start justify-between mb-4">
+                <div 
+                  className="p-3 rounded-lg"
+                  style={{ backgroundColor: `${action.color}15` }}
+                >
+                  <IconComponent 
+                    size={24} 
+                    style={{ color: action.color }}
+                    className="transition-transform duration-200 group-hover:scale-110"
+                  />
                 </div>
-                <h3 className={`text-xl font-semibold ${action.iconColor}`}>
+                
+                {action.badge && (
+                  <span className="px-2 py-1 bg-red-100 text-red-700 text-xs font-medium rounded-full">
+                    {action.badge}
+                  </span>
+                )}
+                
+                <ArrowRight 
+                  size={16} 
+                  className="text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                />
+              </div>
+
+              <div>
+                <h3 className="font-semibold text-slate-900 mb-1 group-hover:text-slate-700 transition-colors duration-200">
                   {action.title}
                 </h3>
+                <p className="text-slate-600 text-sm">
+                  {action.description}
+                </p>
               </div>
-            </div>
+
+              {/* Subtle hover effect */}
+              <div 
+                className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none"
+                style={{ backgroundColor: `${action.color}05` }}
+              />
+            </button>
           );
         })}
+      </div>
+
+      <div className="mt-6 pt-6 border-t border-slate-200/60">
+        <button 
+          className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-slate-900 text-white rounded-xl hover:bg-slate-800 transition-colors duration-200 group"
+          onClick={() => router.push("/listing")}
+        >
+          <Plus size={18} className="group-hover:rotate-90 transition-transform duration-200" />
+          <span className="font-medium">Create New Listing</span>
+        </button>
       </div>
     </div>
   );

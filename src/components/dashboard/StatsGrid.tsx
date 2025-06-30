@@ -1,5 +1,5 @@
 import React from 'react';
-import { Package, DollarSign, ShoppingCart, MessageSquare } from 'lucide-react';
+import { Package, DollarSign, ShoppingCart, MessageSquare, TrendingUp } from 'lucide-react';
 
 const StatsGrid = () => {
   const stats = [
@@ -7,93 +7,100 @@ const StatsGrid = () => {
       id: 1,
       title: "Products Listed",
       value: "24",
+      change: "+12%",
+      changeType: "positive",
       icon: Package,
-      bgColor: "bg-white",
-      valueColor: "text-[#00A79D]",
-      iconColor: "text-[#00A79D]",
-      titleColor: "text-gray-600"
+      color: "#0f766e"
     },
     {
       id: 2,
-      title: "This Month Earnings",
+      title: "Monthly Earnings",
       value: "KSh 45,200",
+      change: "+23%",
+      changeType: "positive",
       icon: DollarSign,
-      bgColor: "bg-white",
-      valueColor: "text-[#00A79D]",
-      iconColor: "text-[#00A79D]", 
-      titleColor: "text-gray-600"
+      color: "#ea580c"
     },
     {
       id: 3,
-      title: "Ongoing Sales",
+      title: "Active Orders",
       value: "8",
+      change: "+5%",
+      changeType: "positive",
       icon: ShoppingCart,
-      bgColor: "bg-white",
-      valueColor: "text-[#00A79D]",
-      iconColor: "text-[#00A79D]",
-      titleColor: "text-gray-600"
+      color: "#7c3aed"
     },
     {
       id: 4,
-      title: "Unread Messages",
+      title: "New Messages",
       value: "3",
+      change: "0%",
+      changeType: "neutral",
       icon: MessageSquare,
-      bgColor: "bg-white",
-      valueColor: "text-[#00A79D]",
-      iconColor: "text-[#00A79D]",
-      titleColor: "text-gray-600"
+      color: "#dc2626"
     }
   ];
 
   return (
-    <div className="w-full p-6 bg-gradient-to-br from-gray-50 to-[#78CCD0]/10">
+    <div>
+      <div className="mb-6">
+        <h2 className="text-xl font-semibold text-slate-800 mb-1">Business Metrics</h2>
+        <p className="text-slate-600 text-sm">Key performance indicators for your business</p>
+      </div>
+      
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat, index) => {
+        {stats.map((stat) => {
           const IconComponent = stat.icon;
+          
           return (
             <div
               key={stat.id}
-              className={`
-                ${stat.bgColor}
-                rounded-2xl p-6 
-                border border-gray-100
-                shadow-sm hover:shadow-lg
-                transform transition-all duration-300 ease-out
-                hover:scale-105 hover:-translate-y-1
-                group cursor-pointer
-                animate-pulse
-              `}
-              style={{
-                animationDelay: `${index * 100}ms`,
-                animationDuration: '2s',
-                animationIterationCount: '1'
-              }}
+              className="bg-white rounded-xl p-6 border border-slate-200/60 shadow-sm hover:shadow-md transition-all duration-200 group cursor-pointer"
             >
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <p className={`${stat.titleColor} text-sm font-medium mb-2 group-hover:text-[#205D5A] transition-colors duration-200`}>
-                    {stat.title}
-                  </p>
-                  <p className={`${stat.valueColor} text-3xl font-bold group-hover:scale-110 transform transition-transform duration-200`}>
-                    {stat.value}
-                  </p>
+              <div className="flex items-start justify-between mb-4">
+                <div 
+                  className="p-3 rounded-lg"
+                  style={{ backgroundColor: `${stat.color}15` }}
+                >
+                  <IconComponent 
+                    size={24} 
+                    style={{ color: stat.color }}
+                    className="transition-transform duration-200 group-hover:scale-110"
+                  />
                 </div>
                 
-                <div className={`
-                  ${stat.iconColor} 
-                  transform transition-all duration-300
-                  group-hover:scale-110 group-hover:rotate-6
-                  opacity-80 group-hover:opacity-100
-                `}>
-                  <IconComponent size={32} strokeWidth={2} />
+                <div className="flex items-center space-x-1 text-sm">
+                  <TrendingUp 
+                    size={14} 
+                    className={`
+                      ${stat.changeType === 'positive' ? 'text-emerald-500' : 
+                        stat.changeType === 'negative' ? 'text-red-500' : 'text-slate-400'}
+                    `}
+                  />
+                  <span 
+                    className={`font-medium
+                      ${stat.changeType === 'positive' ? 'text-emerald-600' : 
+                        stat.changeType === 'negative' ? 'text-red-600' : 'text-slate-500'}
+                    `}
+                  >
+                    {stat.change}
+                  </span>
                 </div>
               </div>
-              
-              {/* Subtle hover effect background */}
-              <div className="absolute inset-0 bg-gradient-to-br from-[#00A79D]/5 to-[#78CCD0]/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              
-              {/* Bottom accent line */}
-              <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#00A79D] to-[#78CCD0] rounded-b-2xl transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+
+              <div>
+                <p className="text-2xl font-bold text-slate-900 mb-1 group-hover:scale-105 transform transition-transform duration-200">
+                  {stat.value}
+                </p>
+                <p className="text-slate-600 text-sm font-medium">
+                  {stat.title}
+                </p>
+              </div>
+
+              <div 
+                className="absolute bottom-0 left-0 right-0 h-0.5 rounded-b-xl transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"
+                style={{ backgroundColor: stat.color }}
+              />
             </div>
           );
         })}
