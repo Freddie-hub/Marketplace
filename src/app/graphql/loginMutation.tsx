@@ -6,6 +6,26 @@ mutation Login($args: LoginArgs) {
     status
     message
     token
+    user {
+      id
+      Fname
+      Mname
+      Lname
+      photo
+      email
+      role
+      password
+      warehouse {
+        id
+        capacity
+        email
+        address
+        location
+        managerId
+        name
+        phone
+      }
+    }
   }
 }
 `
