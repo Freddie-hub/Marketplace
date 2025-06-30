@@ -1,32 +1,10 @@
 import React from 'react';
-import { TrendingUp, ExternalLink, CheckCircle, Truck, Clock } from 'lucide-react';
+import { TrendingUp, ExternalLink, Clock } from 'lucide-react';
 
 const RecentSales = () => {
   const sales = [
     {
       id: 1,
-      product: "Organic Tomatoes",
-      buyer: "Buyer #024",
-      amount: "KSh 3,200",
-      status: "Delivered",
-      statusColor: "text-emerald-700",
-      statusBg: "bg-emerald-100",
-      statusIcon: CheckCircle,
-      time: "2 hours ago"
-    },
-    {
-      id: 2,
-      product: "Fresh Spinach",
-      buyer: "Buyer #018",
-      amount: "KSh 1,800",
-      status: "Shipped",
-      statusColor: "text-blue-700",
-      statusBg: "bg-blue-100",
-      statusIcon: Truck,
-      time: "5 hours ago"
-    },
-    {
-      id: 3,
       product: "Sweet Potatoes",
       buyer: "Buyer #031",
       amount: "KSh 2,400",
@@ -103,7 +81,7 @@ const RecentSales = () => {
             <TrendingUp size={16} className="text-emerald-500" />
             <span>Total sales this week</span>
           </div>
-          <span className="font-bold text-slate-900">KSh 12,400</span>
+          <span className="font-bold text-slate-900">KSh 0</span>
         </div>
       </div>
     </div>
