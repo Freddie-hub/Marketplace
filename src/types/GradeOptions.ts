@@ -1,5 +1,1 @@
-export interface GradeOption {
-    value: string;
-    label: string;
-  }
-  
+export type GradeOption = 'Grade A' | 'Grade B' | 'Grade C' | 'Premium' | 'Standard';
