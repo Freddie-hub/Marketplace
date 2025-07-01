@@ -40,7 +40,7 @@ const SignUpForm: FC<SignUpFormProps> = ({ role, title, subtitle }) => {
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
 
-  const [createFarmerOrBuyer, { loading }] = useMutation(CREATE_FARMER_OR_BUYER_MUTATION);
+  const [createFarmer, { loading }] = useMutation(CREATE_FARMER_OR_BUYER_MUTATION);
   const [googleSignup, { loading: googleLoading }] = useMutation(GOOGLE_SIGNUP_MUTATION);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -77,7 +77,7 @@ const SignUpForm: FC<SignUpFormProps> = ({ role, title, subtitle }) => {
 
       console.log('Sending signup request with variables:', variables);
 
-      const result = await createFarmerOrBuyer({ variables });
+      const result = await createFarmer({ variables });
       console.log('Signup result:', result);
 
       const successfulSignup = result.data?.createFarmerOrBuyer?.status === "Success";
@@ -133,9 +133,11 @@ const SignUpForm: FC<SignUpFormProps> = ({ role, title, subtitle }) => {
 
       const result = await googleSignup({ variables });
       const backendToken = result.data?.GoogleSignup?.token;
+      const backendUser = result.data?.GoogleSignup?.user;
 
       if (backendToken) {
         localStorage.setItem('token', backendToken);
+        localStorage.setItem("user", backendUser)
         toast.success('Google signup successful!');
         setTimeout(() => {
           router.push('/dashboard');
