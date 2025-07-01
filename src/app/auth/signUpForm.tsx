@@ -47,60 +47,115 @@ const SignUpForm: FC<SignUpFormProps> = ({ role, title, subtitle }) => {
     const { name, value } = e.target;
     setForm((prevForm) => ({ ...prevForm, [name]: value }));
   };
+const handleEmailSignup = async () => {
+  if (!validateForm()) return;
 
-  const validateForm = (): boolean => {
-    if (!form.firstName || !form.lastName || !form.email || !form.password) {
-      setError('Please fill in all required fields: First Name, Last Name, Email, and Password.');
-      return false;
+  try {
+    const variables = {
+      args: {
+        email: form.email,
+        Fname: form.firstName,
+        Lname: form.lastName,
+        Mname: form.middleName || null,
+        phone: form.phone || null,
+        address: form.address || null,
+        password: form.password,
+        role,
+        photo: "",
+        isGoogleUser: false
+      }
+    };
+
+    console.log('Sending signup request with variables:', variables);
+
+    const result = await createFarmer({ variables });
+    console.log('Signup result:', result);
+
+    const response = result.data?.createFarmer;
+    
+    if (!response) {
+      throw new Error('No response data received');
     }
-    setError(null);
-    return true;
-  };
 
-  const handleEmailSignup = async () => {
-    if (!validateForm()) return;
+    const successfulSignup = response.status === "Success";
 
-    try {
-      const variables = {
-        args: {
-          email: form.email,
-          Fname: form.firstName,
-          Lname: form.lastName,
-          Mname: form.middleName,
-          phone: form.phone || null,
-          address: form.address || null,
-          password: form.password,
-          role,
-          photo: ""
+    if (successfulSignup) {
+      const message = response.message || 'Account created successfully!';
+      toast.success(message);
+      
+      if (response.token) {
+        localStorage.setItem('token', response.token);
+        if (response.user) {
+          localStorage.setItem('user', JSON.stringify(response.user));
         }
-      };
-
-      console.log('Sending signup request with variables:', variables);
-
-      const result = await createFarmer({ variables });
-      console.log('Signup result:', result);
-
-      const successfulSignup = result.data?.createFarmerOrBuyer?.status === "Success";
-
-      if (successfulSignup) {
-        const message = result.data?.createFarmerOrBuyer?.message || 'Account created successfully!';
-        toast.success(message);
-        
+        setTimeout(() => {
+          router.push('/dashboard');
+        }, 1000);
+      } else if (response.requiresEmailConfirmation) {
+        setTimeout(() => {
+          router.push('/login?message=Please check your email for confirmation');
+        }, 1000);
+      } else {
         setTimeout(() => {
           router.push('/login');
         }, 1000);
-      } else {
-        const errorMessage = result.data?.createFarmerOrBuyer?.message || 'Signup failed. Please try again.';
-        setError(errorMessage);
-        toast.error(errorMessage);
       }
-    } catch (err: any) {
-      console.error('Signup error:', err);
+    } else {
+      const errorMessage = response.message || 'Signup failed. Please try again.';
+      setError(errorMessage);
+      toast.error(errorMessage);
+    }
+  } catch (err: any) {
+    console.error('Signup error:', err);
+    
+    if (err.graphQLErrors && err.graphQLErrors.length > 0) {
+      const errorMessage = err.graphQLErrors[0].message;
+      setError(errorMessage);
+      toast.error(errorMessage);
+    } else if (err.networkError) {
+      const errorMessage = 'Network error. Please check your connection.';
+      setError(errorMessage);
+      toast.error(errorMessage);
+    } else {
       const errorMessage = err.message || 'An error occurred during signup.';
       setError(errorMessage);
       toast.error(errorMessage);
     }
-  };
+  }
+};
+
+const validateForm = (): boolean => {
+  const errors: string[] = [];
+  
+  if (!form.firstName.trim()) errors.push('First Name is required');
+  if (!form.lastName.trim()) errors.push('Last Name is required');
+  if (!form.email.trim()) errors.push('Email is required');
+  if (!form.password) errors.push('Password is required');
+  
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (form.email && !emailRegex.test(form.email)) {
+    errors.push('Please enter a valid email address');
+  }
+  
+  if (form.password && form.password.length < 6) {
+    errors.push('Password must be at least 6 characters long');
+  }
+  
+  if (form.phone && form.phone.length > 0) {
+    const phoneRegex = /^[\+]?[\d\s\-\(\)]{10,}$/;
+    if (!phoneRegex.test(form.phone)) {
+      errors.push('Please enter a valid phone number');
+    }
+  }
+  
+  if (errors.length > 0) {
+    setError(errors.join(', '));
+    return false;
+  }
+  
+  setError(null);
+  return true;
+};
 
   const handleGoogleSuccess = async (credentialResponse: any) => {
     setError(null);
@@ -149,7 +204,7 @@ const SignUpForm: FC<SignUpFormProps> = ({ role, title, subtitle }) => {
         }, 1000);
       }
     } catch (err: any) {
-      console.error('Google signup error:', err); // Debug log
+      console.error('Google signup error:', err);
       const errorMessage = err.message || 'Google Sign-In failed.';
       setError(errorMessage);
       toast.error(errorMessage);
