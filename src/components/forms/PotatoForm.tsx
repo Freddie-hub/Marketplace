@@ -27,18 +27,18 @@ const PotatoForm: React.FC<PotatoFormProps> = ({ onBack }) => {
     location: '',
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Basic validation for required fields
-    if (!formData.farmer || !formData.quantity || !formData.unitPrice) {
-      alert('Please fill in all required fields (Farmer, Quantity, Unit Price).');
-      return;
-    }
+  // const handleSubmit = (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   // Basic validation for required fields
+  //   if (!formData.farmer || !formData.quantity || !formData.unitPrice) {
+  //     alert('Please fill in all required fields (Farmer, Quantity, Unit Price).');
+  //     return;
+  //   }
 
-    alert(`Potato listing submitted successfully! Product ID: ${formData.productId}`);
-    console.log('Potato form submitted:', formData);
-    // TODO: Add API call to submit form data to server
-  };
+  //   alert(`Potato listing submitted successfully! Product ID: ${formData.productId}`);
+  //   console.log('Potato form submitted:', formData);
+  //   // TODO: Add API call to submit form data to server
+  // };
 
   const handleCertificationChange = (cert: string, checked: boolean) => {
     setFormData((prev) => ({
