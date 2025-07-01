@@ -3,7 +3,6 @@
 import React, { JSX, useState } from 'react';
 import Image from 'next/image';
 import Navbar from '@/components/Navbar';
-import Footer from '@/components/footer';
 import CoffeeForm from '@/components/forms/CoffeeForm';
 import PotatoForm from '@/components/forms/PotatoForm';
 import AvocadoForm from '@/components/forms/AvocadoForm';
