@@ -41,9 +41,9 @@ export default function CoffeeFarmerBanner() {
     }
   };
 
-  const handleWarehouseRegistartion = () => {
-    router.push('/signup/warehouse-guy');
-  };
+  // const handleWarehouseRegistartion = () => {
+  //   router.push('/signup/warehouse-guy');
+  // };
   const handleShopNowClick = () => {
     router.push('/signup/buyer');
   };
@@ -107,13 +107,13 @@ export default function CoffeeFarmerBanner() {
               Sell Now 
               <span className="ml-2 group-hover:translate-x-1 inline-block transition-transform duration-300">→</span>
             </button>
-            <button 
+            {/* <button 
               onClick={handleWarehouseRegistartion}
               className="group bg-white hover:bg-gray-50 text-gray-800 font-semibold py-2 px-6 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 hover:scale-105 text-sm"
             >
               Join with a warehouse
               <span className="ml-2 group-hover:translate-x-1 inline-block transition-transform duration-300">→</span>
-            </button>
+            </button> */}
           </div>
         </div>
       </div>
