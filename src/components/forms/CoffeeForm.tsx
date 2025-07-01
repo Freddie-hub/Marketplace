@@ -28,18 +28,18 @@ const CoffeeForm: React.FC<CoffeeFormProps> = ({ onBack }) => {
     location: '',
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Basic validation for required fields
-    if (!formData.farmer || !formData.quantity) {
-      alert('Please fill in all required fields (Farmer, Quantity).');
-      return;
-    }
+  // const handleSubmit = (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   // Basic validation for required fields
+  //   if (!formData.farmer || !formData.quantity) {
+  //     alert('Please fill in all required fields (Farmer, Quantity).');
+  //     return;
+  //   }
 
-    alert(`Coffee listing submitted successfully! Product ID: ${formData.productId}`);
-    console.log('Coffee form submitted:', formData);
-    // TODO: Add API call to submit form data to server
-  };
+  //   alert(`Coffee listing submitted successfully! Product ID: ${formData.productId}`);
+  //   console.log('Coffee form submitted:', formData);
+  //   // TODO: Add API call to submit form data to server
+  // };
 
   const handleCertificationChange = (cert: string, checked: boolean) => {
     setFormData((prev) => ({
