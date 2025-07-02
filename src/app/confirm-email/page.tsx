@@ -1,8 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import CONFIRM_EMAIL_MUTATION from '../graphql/emailMutation';
+import { useMutation } from '@apollo/client';
 
 export default function ConfirmEmailPage() {
   const [status, setStatus] = useState<'loading' | 'success' | 'error' | 'expired'>('loading');
@@ -11,6 +14,8 @@ export default function ConfirmEmailPage() {
   const router = useRouter();
   const token = searchParams.get('token');
 
+  const [confirmEmailMutation] = useMutation(CONFIRM_EMAIL_MUTATION);
+
   useEffect(() => {
     if (!token) {
       setStatus('error');
@@ -18,43 +23,65 @@ export default function ConfirmEmailPage() {
       return;
     }
 
-    const confirmEmail = async () => {
+    const handleEmailConfirmation = async () => {
       try {
-        const response = await fetch('/api/confirm-email', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ token }),
+        const response = await confirmEmailMutation({
+          variables: {
+            token
+          }
         });
 
-        const data = await response.json();
-
-        if (response.ok) {
-          setStatus('success');
-          setMessage('Your email has been successfully confirmed! You can now log in to your account.');
+        const { data } = response;
+        
+        if (data?.confirmEmail) {
+          const { status: responseStatus, message: responseMessage } = data.confirmEmail;
           
-          setTimeout(() => {
-            router.push('/login');
-          }, 3000);
+          if (responseStatus === 'Success') {
+            setStatus('success');
+            setMessage(responseMessage || 'Your email has been successfully confirmed! You can now log in to your account.');
+            
+            setTimeout(() => {
+              router.push('/login');
+            }, 3000);
+          } else {
+            if (responseMessage?.toLowerCase().includes('expired') || responseMessage?.toLowerCase().includes('invalid')) {
+              setStatus('expired');
+              setMessage(responseMessage || 'The confirmation link has expired or is invalid.');
+            } else {
+              setStatus('error');
+              setMessage(responseMessage || 'Failed to confirm email. Please try again.');
+            }
+          }
         } else {
-          if (data.error?.includes('expired') || data.error?.includes('invalid')) {
+          setStatus('error');
+          setMessage('Invalid response from server. Please try again.');
+        }
+      } catch (error:any) {
+        console.error('Confirmation error:', error);
+        
+        if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+          const graphQLError = error.graphQLErrors[0];
+          const errorMessage = graphQLError.message;
+          
+          if (errorMessage.toLowerCase().includes('expired') || errorMessage.toLowerCase().includes('invalid')) {
             setStatus('expired');
-            setMessage(data.error || 'The confirmation link has expired or is invalid.');
+            setMessage(errorMessage);
           } else {
             setStatus('error');
-            setMessage(data.error || 'Failed to confirm email. Please try again.');
+            setMessage(errorMessage);
           }
+        } else if (error.networkError) {
+          setStatus('error');
+          setMessage('Network error. Please check your connection and try again.');
+        } else {
+          setStatus('error');
+          setMessage('An unexpected error occurred. Please try again later.');
         }
-      } catch (error) {
-        console.error('Confirmation error:', error);
-        setStatus('error');
-        setMessage('An unexpected error occurred. Please try again later.');
       }
     };
 
-    confirmEmail();
-  }, [token, router]);
+    handleEmailConfirmation();
+  }, [token, router, confirmEmailMutation]);
 
   const getStatusIcon = () => {
     switch (status) {
