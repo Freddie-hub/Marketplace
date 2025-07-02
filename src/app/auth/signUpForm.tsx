@@ -65,7 +65,7 @@ const handleEmailSignup = async () => {
       }
     };
 
-    console.log('Sending signup request with variables:', variables);
+    // console.log('Sending signup request with variables:', variables);
 
     const result = await createFarmer({ variables });
     console.log('Signup result:', result);
