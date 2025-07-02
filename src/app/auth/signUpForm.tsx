@@ -62,7 +62,6 @@ const handleEmailSignup = async () => {
         password: form.password,
         role,
         photo: "",
-        isGoogleUser: false
       }
     };
 
