@@ -47,7 +47,8 @@ export default function LoginPage() {
     } else if (user.role === "WAREHOUSE_GUY") {
       router.push("/warehouse-dashboard");
     } else if (user.role === "BUYER") {
-      router.push("/buyer-dashboard");
+      // router.push("/buyer-dashboard");
+      router.push("/dashboard")
     } else {
       router.push("/dashboard");
     }
