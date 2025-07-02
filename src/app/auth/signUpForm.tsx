@@ -194,7 +194,7 @@ const validateForm = (): boolean => {
         localStorage.setItem("user", backendUser)
         toast.success('Google signup successful!');
         setTimeout(() => {
-          router.push('/dashboard');
+          router.push('/login');
         }, 1000);
       } else {
         toast.info("Authentication token not received.");
