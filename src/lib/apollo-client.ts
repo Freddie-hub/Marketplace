@@ -3,8 +3,8 @@ import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
 
 const httpLink = createHttpLink({
-  uri: 'http://localhost:4000/graphql',
-  // uri:"https://coffee-sys-api.vercel.app/graphql"
+  // uri: 'http://localhost:4000/graphql',
+  uri:"https://coffee-sys-api.vercel.app/graphql"
 });
 
 const authLink = setContext((_, { headers }) => {
