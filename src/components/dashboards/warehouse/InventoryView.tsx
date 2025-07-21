@@ -1,7 +1,7 @@
 import { Package, Calendar, User, ShieldCheck } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/dashboards/warehouse/ui/card";
+import { Badge } from "@/components/dashboards/warehouse/ui/badge";
+import { Button } from "@/components/dashboards/warehouse/ui/button";
 
 const inventory = [
   {

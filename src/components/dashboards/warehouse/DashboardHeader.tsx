@@ -1,6 +1,6 @@
 import { Bell, Settings, User } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/dashboards/warehouse/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/dashboards/warehouse/ui/avatar";
 
 export const DashboardHeader = () => {
   return (

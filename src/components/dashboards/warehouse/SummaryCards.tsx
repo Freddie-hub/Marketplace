@@ -1,5 +1,5 @@
 import { Package, Users, TrendingUp, DollarSign, Truck } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/dashboards/warehouse/ui/card";
 
 const summaryData = [
   {

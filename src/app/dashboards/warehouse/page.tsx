@@ -1,9 +1,9 @@
-import { DashboardHeader } from "@/components/DashboardHeader";
-import { SummaryCards } from "@/components/SummaryCards";
-import { QuickActions } from "@/components/QuickActions";
-import { FarmerManagement } from "@/components/FarmerManagement";
-import { InventoryView } from "@/components/InventoryView";
-import { ReleaseProcessing } from "@/components/ReleaseProcessing";
+import { DashboardHeader } from "@/components/dashboards/warehouse/DashboardHeader";
+import { SummaryCards } from "@/components/dashboards/warehouse/SummaryCards";
+import { QuickActions } from "@/components/dashboards/warehouse/QuickActions";
+import { FarmerManagement } from "@/components/dashboards/warehouse/FarmerManagement";
+import { InventoryView } from "@/components/dashboards/warehouse/InventoryView";
+import { ReleaseProcessing } from "@/components/dashboards/warehouse/ReleaseProcessing";
 
 const Index = () => {
   return (
