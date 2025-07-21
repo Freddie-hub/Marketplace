@@ -1,0 +1,1 @@
+export type GradeOption = 'Grade A' | 'Grade B' | 'Grade C' | 'Premium' | 'Standard';
