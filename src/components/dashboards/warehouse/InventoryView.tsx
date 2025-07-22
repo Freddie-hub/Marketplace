@@ -1,3 +1,5 @@
+"use client";
+
 import { Package, Calendar, User, ShieldCheck } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/dashboards/warehouse/ui/card";
 import { Badge } from "@/components/dashboards/warehouse/ui/badge";
@@ -48,29 +50,40 @@ const inventory = [
 
 export const InventoryView = () => {
   return (
-    <Card>
+    <Card style={{ backgroundColor: "var(--background)", color: "var(--foreground)" }}>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Package className="h-5 w-5 text-primary" />
+        <CardTitle className="flex items-center gap-2" style={{ color: "var(--color-black)" }}>
+          <Package className="h-5 w-5" style={{ color: "var(--color-teal)" }} />
           Current Inventory
-          <Badge variant="secondary" className="ml-2">{inventory.length} items</Badge>
+          <Badge style={{ backgroundColor: "var(--color-light-aqua)", color: "var(--color-black)" }} className="ml-2">
+            {inventory.length} items
+          </Badge>
         </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
           {inventory.map((item, index) => (
-            <div key={index} className="border rounded-lg p-4 hover:shadow-md transition-all duration-200">
+            <div
+              key={index}
+              className="border rounded-lg p-4 hover:shadow-md transition-all duration-200"
+              style={{ borderColor: "var(--color-teal)", backgroundColor: "hover:bg-[var(--color-pink-lavender)]/20" }}
+            >
               <div className="flex justify-between items-start mb-3">
                 <div>
-                  <h4 className="font-semibold text-foreground">{item.commodity}</h4>
-                  <div className="flex items-center gap-1 text-sm text-muted-foreground mt-1">
+                  <h4 className="font-semibold" style={{ color: "var(--color-black)" }}>
+                    {item.commodity}
+                  </h4>
+                  <div className="flex items-center gap-1 text-sm" style={{ color: "var(--color-dark-teal)" }}>
                     <User className="h-3 w-3" />
                     {item.farmer}
                   </div>
                 </div>
-                <Badge 
-                  variant={item.status === 'In Stock' ? 'default' : 'secondary'}
-                  className={item.status === 'In Stock' ? 'bg-success text-success-foreground' : ''}
+                <Badge
+                  variant={item.status === "In Stock" ? "default" : "secondary"}
+                  style={{
+                    backgroundColor: item.status === "In Stock" ? "var(--color-teal)" : "var(--color-light-aqua)",
+                    color: "var(--color-black)",
+                  }}
                 >
                   {item.status}
                 </Badge>
@@ -78,25 +91,29 @@ export const InventoryView = () => {
               
               <div className="grid grid-cols-2 gap-4 text-sm mb-3">
                 <div>
-                  <span className="text-muted-foreground">Batch:</span>
-                  <span className="ml-2 font-medium">{item.batch}</span>
+                  <span style={{ color: "var(--color-dark-teal)" }}>Batch:</span>
+                  <span className="ml-2 font-medium" style={{ color: "var(--color-black)" }}>{item.batch}</span>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">Quantity:</span>
-                  <span className="ml-2 font-medium">{item.quantity} ({item.weight})</span>
+                  <span style={{ color: "var(--color-dark-teal)" }}>Quantity:</span>
+                  <span className="ml-2 font-medium" style={{ color: "var(--color-black)" }}>{item.quantity} ({item.weight})</span>
                 </div>
               </div>
               
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4 text-sm">
-                  <div className="flex items-center gap-1 text-muted-foreground">
+                  <div className="flex items-center gap-1" style={{ color: "var(--color-dark-teal)" }}>
                     <Calendar className="h-3 w-3" />
                     {item.dateStored}
                   </div>
-                  {item.certification !== 'None' && (
+                  {item.certification !== "None" && (
                     <div className="flex items-center gap-1">
-                      <ShieldCheck className="h-3 w-3 text-success" />
-                      <Badge variant="outline" className="text-xs">
+                      <ShieldCheck className="h-3 w-3" style={{ color: "var(--color-teal)" }} />
+                      <Badge
+                        variant="outline"
+                        className="text-xs"
+                        style={{ borderColor: "var(--color-teal)", color: "var(--color-black)" }}
+                      >
                         {item.certification}
                       </Badge>
                     </div>
@@ -104,9 +121,22 @@ export const InventoryView = () => {
                 </div>
                 
                 <div className="flex gap-2">
-                  <Button variant="outline" size="sm">View Details</Button>
-                  {item.status === 'In Stock' && (
-                    <Button size="sm" className="bg-primary hover:bg-primary-dark text-primary-foreground">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    style={{ borderColor: "var(--color-teal)", color: "var(--color-teal)" }}
+                  >
+                    View Details
+                  </Button>
+                  {item.status === "In Stock" && (
+                    <Button
+                      size="sm"
+                      style={{
+                        backgroundColor: "var(--color-bright-orange)",
+                        color: "var(--color-black)",
+                      }}
+                      className="hover:bg-[var(--color-vivid-orange)]"
+                    >
                       Release
                     </Button>
                   )}

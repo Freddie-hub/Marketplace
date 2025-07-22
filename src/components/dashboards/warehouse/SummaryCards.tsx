@@ -1,3 +1,5 @@
+"use client";
+
 import { Package, Users, TrendingUp, DollarSign, Truck } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/dashboards/warehouse/ui/card";
 
@@ -7,35 +9,35 @@ const summaryData = [
     value: "2,847 kg",
     change: "+12% from last week",
     icon: Package,
-    color: "text-primary"
+    color: "var(--color-teal)"
   },
   {
     title: "Farmers Using Warehouse",
     value: "24",
     change: "2 new this month",
     icon: Users,
-    color: "text-success"
+    color: "var(--color-bright-orange)"
   },
   {
     title: "Goods Released This Week",
     value: "1,234 kg",
     change: "+8% from last week", 
     icon: TrendingUp,
-    color: "text-info"
+    color: "var(--color-vivid-orange)"
   },
   {
     title: "Inventory Value",
     value: "$85,420",
     change: "+15% from last month",
     icon: DollarSign,
-    color: "text-warning"
+    color: "var(--color-deep-red)"
   },
   {
     title: "Pending Pickups",
     value: "7",
     change: "2 scheduled today",
     icon: Truck,
-    color: "text-earth-brown"
+    color: "var(--color-dark-teal)"
   }
 ];
 
@@ -46,16 +48,20 @@ export const SummaryCards = () => {
         <Card 
           key={index} 
           className="hover:shadow-lg transition-all duration-300 cursor-pointer group hover:scale-105"
+          style={{ backgroundColor: "var(--background)", color: "var(--foreground)" }}
         >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
+            <CardTitle className="text-sm font-medium" style={{ color: "var(--color-dark-teal)" }}>
               {item.title}
             </CardTitle>
-            <item.icon className={`h-5 w-5 ${item.color} group-hover:scale-110 transition-transform duration-200`} />
+            <item.icon
+              className="h-5 w-5 group-hover:scale-110 transition-transform duration-200"
+              style={{ color: item.color }}
+            />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-foreground">{item.value}</div>
-            <p className="text-xs text-muted-foreground mt-1">{item.change}</p>
+            <div className="text-2xl font-bold" style={{ color: "var(--color-black)" }}>{item.value}</div>
+            <p className="text-xs" style={{ color: "var(--color-dark-teal)" }}>{item.change}</p>
           </CardContent>
         </Card>
       ))}

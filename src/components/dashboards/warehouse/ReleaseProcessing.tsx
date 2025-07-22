@@ -1,3 +1,5 @@
+"use client";
+
 import { Send, Clock, CheckCircle, Truck } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/dashboards/warehouse/ui/card";
 import { Badge } from "@/components/dashboards/warehouse/ui/badge";
@@ -66,24 +68,24 @@ const getStatusIcon = (status: string) => {
 const getStatusColor = (status: string) => {
   switch (status) {
     case 'Pending':
-      return 'bg-warning text-warning-foreground';
+      return { backgroundColor: "var(--color-vivid-orange)", color: "var(--color-black)" };
     case 'Released':
-      return 'bg-success text-success-foreground';
+      return { backgroundColor: "var(--color-teal)", color: "var(--color-black)" };
     case 'In Transit':
-      return 'bg-info text-info-foreground';
+      return { backgroundColor: "var(--color-bright-orange)", color: "var(--color-black)" };
     default:
-      return 'bg-muted text-muted-foreground';
+      return { backgroundColor: "var(--color-light-aqua)", color: "var(--color-black)" };
   }
 };
 
 export const ReleaseProcessing = () => {
   return (
-    <Card>
+    <Card style={{ backgroundColor: "var(--background)", color: "var(--foreground)" }}>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Send className="h-5 w-5 text-primary" />
+        <CardTitle className="flex items-center gap-2" style={{ color: "var(--color-black)" }}>
+          <Send className="h-5 w-5" style={{ color: "var(--color-teal)" }} />
           Release Processing
-          <Badge variant="secondary" className="ml-2">
+          <Badge style={{ backgroundColor: "var(--color-light-aqua)", color: "var(--color-black)" }} className="ml-2">
             {releaseOrders.filter(order => order.status === 'Pending').length} pending
           </Badge>
         </CardTitle>
@@ -91,13 +93,20 @@ export const ReleaseProcessing = () => {
       <CardContent>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {releaseOrders.map((order, index) => (
-            <div key={index} className="border rounded-lg p-4 hover:shadow-md transition-all duration-200">
+            <div
+              key={index}
+              className="border rounded-lg p-4 hover:shadow-md transition-all duration-200"
+              style={{ borderColor: "var(--color-teal)" }}
+            >
               <div className="flex justify-between items-start mb-4">
                 <div>
-                  <h4 className="font-semibold text-foreground">{order.id}</h4>
-                  <p className="text-sm text-muted-foreground">{order.requestedDate}</p>
+                  <h4 className="font-semibold" style={{ color: "var(--color-black)" }}>{order.id}</h4>
+                  <p className="text-sm" style={{ color: "var(--color-dark-teal)" }}>{order.requestedDate}</p>
                 </div>
-                <Badge className={`${getStatusColor(order.status)} flex items-center gap-1`}>
+                <Badge
+                  className="flex items-center gap-1"
+                  style={getStatusColor(order.status)}
+                >
                   {getStatusIcon(order.status)}
                   {order.status}
                 </Badge>
@@ -106,34 +115,34 @@ export const ReleaseProcessing = () => {
               <div className="space-y-3 text-sm">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <span className="text-muted-foreground">Buyer:</span>
-                    <p className="font-medium">{order.buyer}</p>
+                    <span style={{ color: "var(--color-dark-teal)" }}>Buyer:</span>
+                    <p className="font-medium" style={{ color: "var(--color-black)" }}>{order.buyer}</p>
                   </div>
                   <div>
-                    <span className="text-muted-foreground">Farmer:</span>
-                    <p className="font-medium">{order.farmer}</p>
+                    <span style={{ color: "var(--color-dark-teal)" }}>Farmer:</span>
+                    <p className="font-medium" style={{ color: "var(--color-black)" }}>{order.farmer}</p>
                   </div>
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <span className="text-muted-foreground">Product:</span>
-                    <p className="font-medium">{order.product}</p>
+                    <span style={{ color: "var(--color-dark-teal)" }}>Product:</span>
+                    <p className="font-medium" style={{ color: "var(--color-black)" }}>{order.product}</p>
                   </div>
                   <div>
-                    <span className="text-muted-foreground">Quantity:</span>
-                    <p className="font-medium">{order.quantity}</p>
+                    <span style={{ color: "var(--color-dark-teal)" }}>Quantity:</span>
+                    <p className="font-medium" style={{ color: "var(--color-black)" }}>{order.quantity}</p>
                   </div>
                 </div>
                 
                 <div>
-                  <span className="text-muted-foreground">Destination:</span>
-                  <p className="font-medium">{order.destination}</p>
+                  <span style={{ color: "var(--color-dark-teal)" }}>Destination:</span>
+                  <p className="font-medium" style={{ color: "var(--color-black)" }}>{order.destination}</p>
                 </div>
                 
                 <div>
-                  <span className="text-muted-foreground">Instructions:</span>
-                  <p className="text-muted-foreground italic">{order.pickupInstructions}</p>
+                  <span style={{ color: "var(--color-dark-teal)" }}>Instructions:</span>
+                  <p className="italic" style={{ color: "var(--color-dark-teal)" }}>{order.pickupInstructions}</p>
                 </div>
               </div>
               
@@ -141,23 +150,41 @@ export const ReleaseProcessing = () => {
                 {order.status === 'Pending' && (
                   <>
                     <Button 
-                      size="sm" 
-                      className="bg-success hover:bg-success/90 text-success-foreground flex-1"
+                      size="sm"
+                      style={{
+                        backgroundColor: "var(--color-teal)",
+                        color: "var(--color-black)",
+                      }}
+                      className="hover:bg-[var(--color-dark-teal)] flex-1"
                     >
                       Mark as Released
                     </Button>
-                    <Button variant="outline" size="sm">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      style={{ borderColor: "var(--color-teal)", color: "var(--color-teal)" }}
+                    >
                       Contact Logistics
                     </Button>
                   </>
                 )}
                 {order.status === 'Released' && (
-                  <Button variant="outline" size="sm" className="w-full">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full"
+                    style={{ borderColor: "var(--color-teal)", color: "var(--color-teal)" }}
+                  >
                     Track Shipment
                   </Button>
                 )}
                 {order.status === 'In Transit' && (
-                  <Button variant="outline" size="sm" className="w-full">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full"
+                    style={{ borderColor: "var(--color-teal)", color: "var(--color-teal)" }}
+                  >
                     Update Status
                   </Button>
                 )}

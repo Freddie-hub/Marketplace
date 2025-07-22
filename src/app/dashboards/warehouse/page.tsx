@@ -1,14 +1,15 @@
-import { DashboardHeader } from "@/components/dashboards/warehouse/DashboardHeader";
+import NavigationBar from '@/components/Navbar';
 import { SummaryCards } from "@/components/dashboards/warehouse/SummaryCards";
 import { QuickActions } from "@/components/dashboards/warehouse/QuickActions";
 import { FarmerManagement } from "@/components/dashboards/warehouse/FarmerManagement";
 import { InventoryView } from "@/components/dashboards/warehouse/InventoryView";
 import { ReleaseProcessing } from "@/components/dashboards/warehouse/ReleaseProcessing";
+import Footer from '@/components/footer';
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
-      <DashboardHeader />
+      <NavigationBar />
       
       <main className="container mx-auto px-6 py-8">
         <SummaryCards />
@@ -26,6 +27,7 @@ const Index = () => {
           <ReleaseProcessing />
         </div>
       </main>
+      <Footer />
     </div>
   );
 };

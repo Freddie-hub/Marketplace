@@ -3048,6 +3048,30 @@
   }
 
   @media (hover: hover) {
+    .hover\:bg-\[var\(--color-dark-teal\)\]:hover {
+      background-color: var(--color-dark-teal);
+    }
+  }
+
+  @media (hover: hover) {
+    .hover\:bg-\[var\(--color-pink-lavender\)\]\/20:hover {
+      background-color: var(--color-pink-lavender);
+    }
+
+    @supports (color: color-mix(in lab, red, red)) {
+      .hover\:bg-\[var\(--color-pink-lavender\)\]\/20:hover {
+        background-color: color-mix(in oklab, var(--color-pink-lavender) 20%, transparent);
+      }
+    }
+  }
+
+  @media (hover: hover) {
+    .hover\:bg-\[var\(--color-vivid-orange\)\]:hover {
+      background-color: var(--color-vivid-orange);
+    }
+  }
+
+  @media (hover: hover) {
     .hover\:bg-blue-700:hover {
       background-color: var(--color-blue-700);
     }
