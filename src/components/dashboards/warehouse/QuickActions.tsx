@@ -1,3 +1,5 @@
+"use client";
+
 import { 
   UserPlus, 
   Package, 
@@ -6,8 +8,8 @@ import {
   FileText, 
   BarChart3 
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/dashboards/warehouse/ui/card";
-import { Button } from "@/components/dashboards/warehouse/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Button } from "./ui/button";
 
 const quickActions = [
   {
