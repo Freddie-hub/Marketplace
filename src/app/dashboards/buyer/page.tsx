@@ -1,13 +1,13 @@
 import NavigationBar from '@/components/Navbar';
-import Header from "@/components/dashboards/buyer/Header"
-import OverviewSection from "@/components/dashboards/buyer/OverviewSection"
-import MarketplaceView from "@/components/dashboards/buyer/MarketplaceView"
-import OrderTracking from "@/components/dashboards/buyer/OrderTracking"
-import ReceiptsPayments from "@/components/dashboards/buyer/ReceiptsPayments"
-import Messages from "@/components/dashboards/buyer/Messages"
-import BuyerAnalytics from "@/components/dashboards/buyer/BuyerAnalytics"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/dashboards/buyer/ui/tabs"
+import OverviewSection from "@/components/dashboards/buyer/OverviewSection";
+import OrderTracking from "@/components/dashboards/buyer/OrderTracking";
+import ReceiptsPayments from "@/components/dashboards/buyer/ReceiptsPayments";
+import Messages from "@/components/dashboards/buyer/Messages";
+import BuyerAnalytics from "@/components/dashboards/buyer/BuyerAnalytics";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/dashboards/buyer/ui/tabs";
 import Footer from '@/components/footer';
+import ProductCard from '@/components/ProductCard';
+import { mockProducts } from '@/lib/mock-data';
 
 export default function BuyerDashboard() {
   return (
@@ -46,7 +46,15 @@ export default function BuyerDashboard() {
           </TabsList>
 
           <TabsContent value="marketplace" className="mt-6">
-            <MarketplaceView />
+            <div className="text-center mb-10">
+              <h2 className="text-4xl font-extrabold text-[#205D5A]">Freshly Harvested Coffee</h2>
+              <p className="mt-2 text-lg text-gray-600">Directly from our network of dedicated farmers.</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {mockProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
           </TabsContent>
 
           <TabsContent value="orders" className="mt-6">
@@ -138,5 +146,5 @@ export default function BuyerDashboard() {
       </main>
       <Footer />
     </div>
-  )
+  );
 }
