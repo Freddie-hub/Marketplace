@@ -71,10 +71,8 @@ export default function AdminDashboard() {
         </main>
       </SidebarProvider>
 
-      {/* Footer (also shifted right by sidebar width) */}
-      <div className="ml-64 mt-5">
+     
         <Footer />
-      </div>
     </div>
   )
 }
