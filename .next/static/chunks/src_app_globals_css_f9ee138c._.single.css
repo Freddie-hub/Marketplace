@@ -660,6 +660,10 @@
     z-index: 100;
   }
 
+  .z-\[999999\] {
+    z-index: 999999;
+  }
+
   .col-span-3 {
     grid-column: span 3 / span 3;
   }

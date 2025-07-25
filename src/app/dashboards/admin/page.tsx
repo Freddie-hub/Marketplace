@@ -47,32 +47,35 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f0f0f0] flex flex-col">
+    <>
       {/* Top Navbar */}
       <NavigationBar />
 
-      <SidebarProvider>
-        {/* Sidebar (fixed below the navbar) */}
-        <div className="fixed top-16 left-0 h-[calc(100vh-64px)] w-64 bg-white border-r border-gray-200 z-40">
-          <AdminSidebar activeSection={activeSection} setActiveSection={setActiveSection} />
-        </div>
-
-        {/* Main Content (pushed right by sidebar width) */}
-        <main className="flex-1 pt-8 ml-64 px-6">
-          <div className="max-w-7xl mx-auto">
-            <header className="mb-8">
-              <h1 className="text-2xl font-bold text-black">Admin Dashboard</h1>
-              <p className="text-sm text-gray-600 mt-2">
-                Manage your agricultural marketplace platform
-              </p>
-            </header>
-            {renderContent()}
+      {/* Wrapper for sidebar and main content */}
+      <div className="flex min-h-screen bg-[#f0f0f0]">
+        <SidebarProvider>
+          {/* Sidebar - Fixed positioning that doesn't scroll */}
+          <div className="fixed top-16 left-0 w-64 bg-white border-r border-gray-200 z-40" style={{ height: 'calc(100vh - 64px)' }}>
+            <AdminSidebar activeSection={activeSection} setActiveSection={setActiveSection} />
           </div>
-        </main>
-      </SidebarProvider>
 
-     
-        <Footer />
-    </div>
+          {/* Main Content - Scrollable content area with proper spacing */}
+          <main className="flex-1 ml-64 px-6 py-8" style={{ minHeight: 'calc(100vh - 64px)' }}>
+            <div className="max-w-7xl mx-auto">
+              <header className="mb-8">
+                <h1 className="text-2xl font-bold text-black">Admin Dashboard</h1>
+                <p className="text-sm text-gray-600 mt-2">
+                  Manage your agricultural marketplace platform
+                </p>
+              </header>
+              {renderContent()}
+            </div>
+          </main>
+        </SidebarProvider>
+      </div>
+
+      {/* Footer - Appears after main content, not overlapped by sidebar */}
+      <Footer />
+    </>
   )
 }

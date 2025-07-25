@@ -35,15 +35,10 @@ const menuItems = [
 export function AdminSidebar({ activeSection, setActiveSection }: AdminSidebarProps) {
   return (
     <div className="h-full w-full bg-white border-r border-gray-200">
-      {/* Sidebar header */}
-      <div className="p-6 border-b border-gray-200">
-        <h2 className="text-lg font-bold text-black">AgriMarket Admin</h2>
-      </div>
-
       {/* Scrollable nav */}
       <nav className="p-4 overflow-y-auto h-[calc(100vh-64px-65px)]">
         {/* 64px = navbar height, 65px = sidebar header */}
-        <ul className="space-y-2">
+        <ul className="space-y-1"> {/* Reduced spacing between items */}
           {menuItems.map((item) => {
             const Icon = item.icon
             return (
@@ -51,7 +46,7 @@ export function AdminSidebar({ activeSection, setActiveSection }: AdminSidebarPr
                 <button
                   onClick={() => setActiveSection(item.id)}
                   className={cn(
-                    "w-full flex items-center gap-3 px-4 py-3 text-left text-sm rounded-lg transition-colors",
+                    "w-full flex items-center gap-3 px-4 py-2 text-left text-sm rounded-lg transition-colors", // Reduced py-3 to py-2
                     activeSection === item.id
                       ? "bg-gray-100 text-black font-medium"
                       : "text-gray-600 hover:bg-gray-50 hover:text-black",

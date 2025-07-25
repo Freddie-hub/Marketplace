@@ -42,7 +42,7 @@ export default function CoffeeFarmerBanner() {
   };
 
   const handleWarehouseRegistartion = () => {
-    router.push('/signup/warehouse-guy');
+    router.push('/signup/warehouse');
   };
   const handleShopNowClick = () => {
     router.push('/signup/buyer');
