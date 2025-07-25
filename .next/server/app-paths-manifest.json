@@ -1,8 +1,18 @@
 {
   "/_not-found/page": "app/_not-found/page.js",
-  "/dashboards/admin/page": "app/dashboards/admin/page.js",
   "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/dashboards/buyer/page": "app/dashboards/buyer/page.js",
+  "/dashboards/farmer/page": "app/dashboards/farmer/page.js",
+  "/dashboards/admin/page": "app/dashboards/admin/page.js",
+  "/listing/page": "app/listing/page.js",
+  "/dashboards/warehouse/page": "app/dashboards/warehouse/page.js",
+  "/dashboards/productForm/page": "app/dashboards/productForm/page.js",
+  "/login/page": "app/login/page.js",
   "/page": "app/page.js",
   "/signup/farmer/page": "app/signup/farmer/page.js",
+  "/password-reset/page": "app/password-reset/page.js",
+  "/signup/buyer/page": "app/signup/buyer/page.js",
+  "/products/[id]/page": "app/products/[id]/page.js",
+  "/reset-password/page": "app/reset-password/page.js",
   "/signup/warehouse/page": "app/signup/warehouse/page.js"
 }
