@@ -43,11 +43,11 @@ export default function LoginPage() {
 
   const navigateBasedOnRole = (user: User) => {
     if (user.role === "ADMINISTRATOR") {
-      router.push("/admin-dashboard");
+      router.push("/dashboards/admin");
     } else if (user.role === "WAREHOUSE_GUY") {
-      router.push("/warehouse-dashboard");
+      router.push("/dashboards/warehouse");
     } else if (user.role === "BUYER") {
-      router.push("/buyer-dashboard");
+      router.push("/dashboards/buyer");
     } else {
       router.push("/dashboard");
     }
