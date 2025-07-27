@@ -4,8 +4,8 @@ import { onError } from '@apollo/client/link/error';
 
 const httpLink = createHttpLink({
   uri: process.env.NODE_ENV === 'development'
-    ? 'http://localhost:4000/graphql' // Local backend for dev
-    : 'https://coffee-sys-api.vercel.app/graphql', // Deployed backend for production
+    ? 'http://localhost:4000/graphql' 
+    : 'https://coffee-sys-api.vercel.app/graphql', 
 });
 
 const authLink = setContext((_, { headers }) => {
