@@ -13,8 +13,8 @@
   --color-black: #000000;
 
   /* Set default theme (light mode) */
-  --background: #f0f0f0; /* Faded gray background */
-  --foreground: var(--color-black); /* Text color */
+  --background: #f0f0f0; 
+  --foreground: var(--color-black); 
 }
 
 @theme inline {
