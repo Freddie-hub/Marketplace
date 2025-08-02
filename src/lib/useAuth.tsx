@@ -1,11 +1,52 @@
-"use client"
-import { StoredUser } from "@/types/StoredUser";
+"use client";
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useQuery } from '@apollo/client';
+import { gql } from '@apollo/client';
+import { StoredUser } from "@/types/StoredUser";
+
+const GET_USER_AUTH_DATA = gql`
+  query GetUserAuthData {
+    User {
+      id
+      role
+      status
+      paymentDetails
+      receivedInvitations {
+        status
+      }
+    }
+  }
+`;
 
 const useAuth = () => {
   const [user, setUser] = useState<StoredUser | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
+
+  const { data, error } = useQuery(GET_USER_AUTH_DATA, {
+    skip: !localStorage.getItem('token'),
+    context: { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } },
+    onCompleted: (data) => {
+      if (data?.User) {
+        const updatedUser = {
+          id: data.User.id,
+          role: data.User.role,
+          status: data.User.status,
+          paymentDetails: data.User.paymentDetails,
+        };
+        setUser(updatedUser);
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+        if (data.User.role === 'FARMER' && !data.User.paymentDetails) {
+          router.push('/dashboards/farmer');
+        }
+      }
+    },
+    onError: () => {
+      logout();
+    },
+  });
 
   useEffect(() => {
     const checkAuthState = () => {
@@ -17,6 +58,12 @@ const useAuth = () => {
           const parsedUser = JSON.parse(storedUserData) as StoredUser;
           setUser(parsedUser);
           setToken(storedToken);
+          if (parsedUser.role === 'FARMER') {
+            const invitationStatus = data?.User?.receivedInvitations?.[0]?.status;
+            if (parsedUser.status !== 'ACTIVE' || invitationStatus !== 'ACCEPTED') {
+              logout();
+            }
+          }
         } else {
           setUser(null);
           setToken(null);
@@ -52,14 +99,14 @@ const useAuth = () => {
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('authStateChanged', handleAuthChange);
     };
-  }, []);
+  }, [data]);
 
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setUser(null);
     setToken(null);
-    
+    router.push('/login');
     window.dispatchEvent(new Event('authStateChanged'));
   };
 
@@ -85,4 +132,4 @@ const useAuth = () => {
   };
 };
 
-export default useAuth
+export default useAuth;
