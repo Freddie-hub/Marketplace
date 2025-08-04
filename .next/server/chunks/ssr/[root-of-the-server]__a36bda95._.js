@@ -26,8 +26,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$apollo$2f$
 ;
 ;
 const httpLink = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$apollo$2f$client$2f$link$2f$http$2f$createHttpLink$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["createHttpLink"])({
-    uri: ("TURBOPACK compile-time truthy", 1) ? 'http://localhost:4000/graphql' // Local backend for dev
-     : ("TURBOPACK unreachable", undefined)
+    uri: ("TURBOPACK compile-time truthy", 1) ? 'http://localhost:4000/graphql' : ("TURBOPACK unreachable", undefined)
 });
 const authLink = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$apollo$2f$client$2f$link$2f$context$2f$index$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["setContext"])((_, { headers })=>{
     const token = ("TURBOPACK compile-time falsy", 0) ? ("TURBOPACK unreachable", undefined) : null;

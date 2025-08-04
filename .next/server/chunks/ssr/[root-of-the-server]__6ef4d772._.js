@@ -33,12 +33,58 @@ __turbopack_context__.s({
     "default": (()=>__TURBOPACK__default__export__)
 });
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react.js [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/navigation.js [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$apollo$2f$client$2f$react$2f$hooks$2f$useQuery$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/@apollo/client/react/hooks/useQuery.js [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$graphql$2d$tag$2f$lib$2f$index$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/graphql-tag/lib/index.js [app-ssr] (ecmascript)");
 "use client";
 ;
+;
+;
+;
+const GET_USER_AUTH_DATA = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$graphql$2d$tag$2f$lib$2f$index$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["gql"]`
+  query GetUserAuthData {
+    User {
+      id
+      role
+      status
+      paymentDetails
+      receivedInvitations {
+        status
+      }
+    }
+  }
+`;
 const useAuth = ()=>{
     const [user, setUser] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null);
     const [token, setToken] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null);
     const [loading, setLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(true);
+    const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRouter"])();
+    const { data, error } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$apollo$2f$client$2f$react$2f$hooks$2f$useQuery$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useQuery"])(GET_USER_AUTH_DATA, {
+        skip: !localStorage.getItem('token'),
+        context: {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        },
+        onCompleted: (data)=>{
+            if (data?.User) {
+                const updatedUser = {
+                    id: data.User.id,
+                    role: data.User.role,
+                    status: data.User.status,
+                    paymentDetails: data.User.paymentDetails
+                };
+                setUser(updatedUser);
+                localStorage.setItem('user', JSON.stringify(updatedUser));
+                if (data.User.role === 'FARMER' && !data.User.paymentDetails) {
+                    router.push('/dashboards/farmer');
+                }
+            }
+        },
+        onError: ()=>{
+            logout();
+        }
+    });
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         const checkAuthState = ()=>{
             try {
@@ -48,6 +94,12 @@ const useAuth = ()=>{
                     const parsedUser = JSON.parse(storedUserData);
                     setUser(parsedUser);
                     setToken(storedToken);
+                    if (parsedUser.role === 'FARMER') {
+                        const invitationStatus = data?.User?.receivedInvitations?.[0]?.status;
+                        if (parsedUser.status !== 'ACTIVE' || invitationStatus !== 'ACCEPTED') {
+                            logout();
+                        }
+                    }
                 } else {
                     setUser(null);
                     setToken(null);
@@ -76,12 +128,15 @@ const useAuth = ()=>{
             window.removeEventListener('storage', handleStorageChange);
             window.removeEventListener('authStateChanged', handleAuthChange);
         };
-    }, []);
+    }, [
+        data
+    ]);
     const logout = ()=>{
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         setUser(null);
         setToken(null);
+        router.push('/login');
         window.dispatchEvent(new Event('authStateChanged'));
     };
     const updateUser = (newUser, newToken)=>{

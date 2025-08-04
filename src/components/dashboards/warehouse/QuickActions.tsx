@@ -1,15 +1,29 @@
 "use client";
-
-import { 
-  UserPlus, 
-  Package, 
-  Send, 
-  Truck, 
-  FileText, 
-  BarChart3 
+import { useRouter } from "next/navigation";
+import {
+  UserPlus,
+  Package,
+  Send,
+  Truck,
+  FileText,
+  BarChart3,
 } from "lucide-react";
 
-const quickActions = [
+interface QuickAction {
+  title: string;
+  description: string;
+  icon: React.ComponentType<{ className?: string }>;
+  gradient: string;
+  bgColor: string;
+  hoverColor: string;
+  action: () => void;
+}
+
+interface QuickActionsProps {
+  warehouseId: number;
+}
+
+const quickActions: QuickAction[] = [
   {
     title: "Invite Farmer",
     description: "Invite farmers to join the platform",
@@ -17,25 +31,25 @@ const quickActions = [
     gradient: "from-teal-500 to-teal-600",
     bgColor: "bg-teal-50",
     hoverColor: "hover:bg-teal-100",
-    action: () => console.log("Invite farmer")
+    action: () => {}, // Replaced with navigation in component
   },
   {
-    title: "Manage Inventory", 
+    title: "Manage Inventory",
     description: "View commodities by farmer and crop",
     icon: Package,
     gradient: "from-orange-500 to-orange-600",
     bgColor: "bg-orange-50",
     hoverColor: "hover:bg-orange-100",
-    action: () => console.log("Manage inventory")
+    action: () => console.log("Manage inventory"),
   },
   {
     title: "Process Releases",
-    description: "Fulfill release orders from sales", 
+    description: "Fulfill release orders from sales",
     icon: Send,
     gradient: "from-amber-500 to-orange-500",
     bgColor: "bg-amber-50",
     hoverColor: "hover:bg-amber-100",
-    action: () => console.log("Process releases")
+    action: () => console.log("Process releases"),
   },
   {
     title: "Manage Logistics",
@@ -44,7 +58,7 @@ const quickActions = [
     gradient: "from-red-500 to-red-600",
     bgColor: "bg-red-50",
     hoverColor: "hover:bg-red-100",
-    action: () => console.log("Manage logistics")
+    action: () => console.log("Manage logistics"),
   },
   {
     title: "View Receipts",
@@ -53,7 +67,7 @@ const quickActions = [
     gradient: "from-slate-500 to-slate-600",
     bgColor: "bg-slate-50",
     hoverColor: "hover:bg-slate-100",
-    action: () => console.log("View receipts")
+    action: () => console.log("View receipts"),
   },
   {
     title: "Analytics & Reports",
@@ -62,11 +76,17 @@ const quickActions = [
     gradient: "from-purple-500 to-pink-500",
     bgColor: "bg-purple-50",
     hoverColor: "hover:bg-purple-100",
-    action: () => console.log("Analytics")
-  }
+    action: () => console.log("Analytics"),
+  },
 ];
 
-export const QuickActions = () => {
+export const QuickActions = ({ warehouseId }: QuickActionsProps) => {
+  const router = useRouter();
+
+  const handleInviteFarmer = () => {
+    router.push(`/dashboards/warehouse/invite?warehouseId=${warehouseId}`);
+  };
+
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
       {/* Header with subtle gradient background */}
@@ -82,7 +102,7 @@ export const QuickActions = () => {
       <div className="p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {quickActions.map((action, index) => (
-            <button 
+            <button
               key={index}
               className={`
                 relative group p-5 rounded-xl border-2 border-gray-100 
@@ -92,18 +112,21 @@ export const QuickActions = () => {
                 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2
                 active:scale-95
               `}
-              onClick={action.action}
+              onClick={action.title === "Invite Farmer" ? handleInviteFarmer : action.action}
             >
               {/* Subtle gradient overlay on hover */}
               <div className="absolute inset-0 bg-gradient-to-br from-white/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl"></div>
-              
+
+              {/* Content */}
               <div className="relative">
                 {/* Icon with gradient background */}
-                <div className={`
-                  inline-flex p-3 rounded-lg bg-gradient-to-br ${action.gradient}
-                  shadow-sm group-hover:shadow-md group-hover:scale-110
-                  transition-all duration-300 mb-4
-                `}>
+                <div
+                  className={`
+                    inline-flex p-3 rounded-lg bg-gradient-to-br ${action.gradient}
+                    shadow-sm group-hover:shadow-md group-hover:scale-110
+                    transition-all duration-300 mb-4
+                  `}
+                >
                   <action.icon className="h-6 w-6 text-white" />
                 </div>
 

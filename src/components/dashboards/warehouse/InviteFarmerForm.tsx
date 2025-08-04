@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useMutation, useQuery } from "@apollo/client";
 import { gql } from "@apollo/client";
-import { InviteFarmerInput, CropInput } from "../../types/InvitationTypes";
+import { InviteFarmerInput, CropInput, InvitationResponse } from '../../../types/InvitationTypes';
 
 const PRODUCTS_BY_WAREHOUSE = gql`
   query ProductsByWarehouse($warehouseId: Int!) {
